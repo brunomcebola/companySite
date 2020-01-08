@@ -1,0 +1,64 @@
+{
+  "name": "cla",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "^4.8.2",
+    "@material-ui/icons": "^4.5.1",
+    "@material-ui/styles": "^4.8.2",
+    "append-react-dom": "^1.0.1",
+    "axios": "^0.19.0",
+    "hybrid-crypto-js": "^0.1.7",
+    "material-table": "^1.54.2",
+    "node-sass": "^4.13.0",
+    "password-hash": "^1.2.2",
+    "prop-types": "^15.7.2",
+    "react": "^16.8.6",
+    "react-cookie": "^4.0.0",
+    "react-day-picker": "^7.4.0",
+    "react-dom": "^16.12.0",
+    "react-encrypt": "^1.0.1",
+    "react-loader-spinner": "^3.1.2",
+    "react-loading-overlay": "^1.0.1",
+    "react-router-dom": "^5.0.1",
+    "react-scripts": "^3.3.0",
+    "react-scroll": "^1.7.12",
+    "react-scroll-to-component": "^1.0.2",
+    "react-select": "^3.0.4",
+    "react-spinners": "^0.5.4",
+    "react-sticky": "^6.0.3",
+    "scroll-to-element": "^2.0.3",
+    "universal-cookie": "^4.0.0"
+  },
+  "scripts": {
+    "build:css": "postcss src/styles/main.css -o src/index.css",
+    "watch:css": "postcss src/styles/main.css -o src/index.css -w",
+    "start": "npm-run-all -p watch:css start-js",
+    "start-js": "react-scripts start",
+    "build-js": "react-scripts build",
+    "build": "npm-run-all build:css build-js",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "autoprefixer": "^9.7.2",
+    "npm-run-all": "^4.1.5",
+    "postcss-cli": "^6.1.3",
+    "postcss-nested": "^4.2.1"
+  }
+}

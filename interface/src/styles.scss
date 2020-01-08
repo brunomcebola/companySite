@@ -1,0 +1,83 @@
+@import "utilities/functions";
+@import "utilities/mixins";
+@import "utilities/variables";
+
+@import url('https://fonts.googleapis.com/css?family=Ubuntu');
+
+::-webkit-scrollbar {
+    width: 15px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey; 
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: $secondColor; 
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: $secondDarkColor; 
+  }
+
+* {
+    outline:none;
+}
+
+html {
+    font-size: 16px;
+    min-width: 850px;
+}
+
+body {
+    background: rgb(246, 245, 247);
+    font-family: 'Ubuntu', sans-serif;
+}
+
+
+button {
+    border: 0;
+    font-size: 18px;
+    font-weight: 100;
+    border-radius: 20px;
+    padding: 6.5px 16.5px;
+    transition: all 80ms ease-in;
+    cursor: pointer;
+
+    &:focus {
+        outline: 0;
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+
+    &.level1 {
+        color: #FFF;
+        @include linear-gradient-background(left, $firstColor, $secondColor);
+        &:active {
+            @include linear-gradient-background(left, $firstDarkColor, $secondDarkColor);
+        }
+    }
+
+    &.level2 {
+        padding: 5px 15px;
+        background: #fff;
+        color: $firstColor;
+        border: 1.5px solid $thirdColor;
+        &:active {
+            color: $firstDarkColor;
+            border-color:  $thirdDarkColor;
+        }
+    }
+
+    &.level3 {
+        color: $thirdColor;
+        background: transparent;
+        &:active {
+            color: $thirdDarkColor;
+        }
+    }
+}

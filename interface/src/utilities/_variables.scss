@@ -1,0 +1,10 @@
+$color: 225;
+
+$firstColor: hsb($color, 83.14, 100);
+$firstDarkColor: hsb($color, 83.14, 80);
+$secondColor: hsb($color + 345, 74.51, 100);
+$secondDarkColor: hsb($color + 350, 74.51, 80);
+$thirdColor: hsb(0, 0, 70);
+$thirdDarkColor: hsb(0, 0, 50);
+
+$accent: hsb(175, 100, 58.82);

@@ -1,0 +1,222 @@
+@mixin linear-gradient-background($dir, $color1, $color2) {
+    background: $color1;
+    background: linear-gradient(to $dir, $color1, $color2);
+    background: -moz-linear-gradient(to $dir, $color1, $color2);
+    background: -webkit-linear-gradient(to $dir, $color1, $color2);
+}
+
+
+//login stuff
+
+@mixin circle-loader-dash() {
+    content:"";
+	position: absolute;
+	top: 45%;
+	height: 0.5em;
+	width: 0;
+	border-bottom: 2px solid #009688;
+	animation-duration: 600ms;
+	animation-timing-function: ease-out;
+	animation-fill-mode: forwards;
+	animation-name: dash
+}
+
+@mixin sign-in-container-hide-animation() {
+    @keyframes hide {
+        0%, 49.99% {
+            opacity: 1;
+            z-index: 3;
+        }
+        
+        50%, 100% {
+            opacity: 0;
+            z-index: 1
+        }
+    }
+
+    @-webkit-keyframes hide {
+        0%, 49.99% {
+            opacity: 1;
+            z-index: 3;
+        }
+        
+        50%, 100% {
+            opacity: 0;
+            z-index: 1
+        }
+    }
+
+    @-moz-keyframes hide {
+        0%, 49.99% {
+            opacity: 1;
+            z-index: 3;
+        }
+        
+        50%, 100% {
+            opacity: 0;
+            z-index: 1
+        }
+    }
+}
+
+@mixin sign-up-container-show-animation() {
+    @keyframes show {
+        0%, 49.99% {
+            opacity: 0;
+            z-index: 1;
+        }
+        
+        50%, 100% {
+            opacity: 1;
+            z-index: 3;
+        }
+    }
+
+    @-webkit-keyframes show {
+        0%, 49.99% {
+            opacity: 0;
+            z-index: 1;
+        }
+        
+        50%, 100% {
+            opacity: 1;
+            z-index: 3;
+        }
+    }
+
+    @-moz-keyframes show {
+        0%, 49.99% {
+            opacity: 0;
+            z-index: 1;
+        }
+        
+        50%, 100% {
+            opacity: 1;
+            z-index: 3;
+        }
+    }
+}
+
+@mixin circle-loader-animation() {
+    @keyframes circle-loader {
+        100% {
+            border-color: #009688;
+            opacity: 1;
+        }
+    }
+    
+    @-webkit-keyframes circle-loader {
+        100% {
+            border-color: #009688;
+            opacity: 1;
+        }
+    }
+    
+    @-moz-keyframes circle-loader {
+        100% {
+            border-color: #009688;
+            opacity: 1;
+        }
+    }
+}
+
+@mixin circle-loader-dash-animation() {
+    @keyframes dash {
+        30% {
+            width: 0;
+        }
+        100% {
+            width: 125px;
+        }
+    }
+    
+    @-webkit-keyframes dash {
+        30% {
+            width: 0;
+        }
+        100% {
+            width: 125px;
+        }
+    }
+    
+    @-moz-keyframes dash {
+        30% {
+            width: 0;
+        }
+        100% {
+            width: 125px;
+        }
+    }
+}
+
+@mixin circle-loader-checkmark-animation() {
+    @keyframes checkmark {
+        0% {
+            height: 0;
+            width: 0;
+            opacity: 1;
+        }
+        20% {
+            height: 0;
+            width: 1.75em;
+            opacity: 1;
+        }
+        40% {
+            height: 3.5em;
+            width: 1.75em;
+            opacity: 1;
+        }
+        100% {
+            height: 3.5em;
+            width: 1.75em;
+            opacity: 1;
+        }
+    }
+    
+    
+    @-webkit-keyframes checkmark {
+        0% {
+            height: 0;
+            width: 0;
+            opacity: 1;
+        }
+        20% {
+            height: 0;
+            width: 1.75em;
+            opacity: 1;
+        }
+        40% {
+            height: 3.5em;
+            width: 1.75em;
+            opacity: 1;
+        }
+        100% {
+            height: 3.5em;
+            width: 1.75em;
+            opacity: 1;
+        }
+    }
+    
+    @-moz-keyframes checkmark {
+        0% {
+            height: 0;
+            width: 0;
+            opacity: 1;
+        }
+        20% {
+            height: 0;
+            width: 1.75em;
+            opacity: 1;
+        }
+        40% {
+            height: 3.5em;
+            width: 1.75em;
+            opacity: 1;
+        }
+        100% {
+            height: 3.5em;
+            width: 1.75em;
+            opacity: 1;
+        }
+    }
+}

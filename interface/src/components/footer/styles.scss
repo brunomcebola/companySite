@@ -1,0 +1,14 @@
+#footer {
+    position: fixed;
+    height: 4%;
+    min-height: 35px;
+    width: 100%;
+    background-color: rgb(49, 49, 49);
+    bottom: 0;
+    color: rgb(194, 194, 194);
+    display: flex;
+	justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 1000;
+}
