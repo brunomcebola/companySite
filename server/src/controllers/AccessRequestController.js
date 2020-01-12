@@ -1,5 +1,26 @@
 const mongoose = require('mongoose');
+const paginate = require('paginate-array');
 const AccessRequestingUser = mongoose.model('AccessRequestingUser');
+
+
+function Paginator(items, page, per_page) {
+ 
+    var page = page || 1,
+    per_page = per_page || 10,
+    offset = (page - 1) * per_page,
+   
+    paginatedItems = items.slice(offset).slice(0, per_page),
+    total_pages = Math.ceil(items.length / per_page);
+    return {
+        page: page,
+        per_page: per_page,
+        pre_page: page - 1 ? page - 1 : null,
+        next_page: (total_pages > page) ? page + 1 : null,
+        total: items.length,
+        total_pages: total_pages,
+        docs: paginatedItems
+    };
+}
 
 module.exports = {
     async new(req, res) {
@@ -20,8 +41,20 @@ module.exports = {
     },
 
     async paginate(req, res) {
-        const { per_page, page } = req.query;
-        const accessRequestingUsers = await AccessRequestingUser.paginate({},{ page , limit: Number(per_page) });
+        const { per_page, page, search } = req.query;
+        let accessRequestingUsers
+        if(search){
+            accessRequestingUsers = await AccessRequestingUser.find({ 
+                $or: [ 
+                    { name: {$regex: search, $options: 'i'}}, 
+                    { surname: {$regex: search, $options: 'i'}},
+                    { email: {$regex: search, $options: 'i'}}
+                ] 
+            })
+            const paginateCollection = Paginator(accessRequestingUsers, Number(page), Number(per_page));
+            return res.json(paginateCollection)
+        }
+        accessRequestingUsers = await AccessRequestingUser.paginate({},{ page , limit: Number(per_page) });
         return res.json(accessRequestingUsers);
     },
 

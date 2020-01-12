@@ -51,14 +51,14 @@ export default class UsersManagementPage extends Component {
 							title="Users Access Request List"
 							tableRef={this.tableRef}
 							columns={this.state.columns}
-							data={query =>
-
+							data={query => 
 								/* TODO: a pesquisa não está a funcionar */
-
 								new Promise((resolve, reject) => {
-									let url = 'http://localhost:3001/accessRequest/paginate?'
-									url += 'per_page=' + query.pageSize
-									url += '&page=' + (query.page + 1)
+									let url = 'http://localhost:3001/accessRequest/'
+									url += 'paginate?per_page=' + query.pageSize 
+									url += '&page=' + (query.page + 1) 
+									url += '&search=' + query.search
+										
 									fetch(url)
 										.then(response => response.json())
 										.then(result => {
@@ -92,9 +92,6 @@ export default class UsersManagementPage extends Component {
 									tooltip: 'Refresh Data',
 									isFreeAction: true,
 									onClick: () => {
-										console.log(this.tableRef.current.state.currentPage)
-										console.log(this.tableRef.current.state.pageSize)
-										console.log(this.tableRef.current.state)
 										this.tableRef.current && this.tableRef.current.onQueryChange()
 									}
 								}

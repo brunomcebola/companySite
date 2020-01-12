@@ -162,7 +162,7 @@ export default class LoginPage extends Component {
                             </div>
                             {/* sign-up form */}
                             <div id="signup-form">
-                                <h1>Create Account</h1>
+                                <h1>Request access</h1>
                                 {/* data input area */}
                                 <div className = "data">
                                     {/* Name input field */}
