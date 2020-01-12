@@ -10,6 +10,7 @@
 	align-items: center;
 	flex-direction: column;
 	height: 100vh;
+	min-height: 700px;
 	overflow: hidden;
 	text-align: center;
 
@@ -317,6 +318,9 @@
 
 		.overlay {
 			@include linear-gradient-background(left, $firstColor, $secondColor);
+			background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../../images/smartcities.jpg');
+			background-repeat: no-repeat;
+  			background-size: cover;
 			color: #FFFFFF;
 			position: relative;
 			left: -100%;

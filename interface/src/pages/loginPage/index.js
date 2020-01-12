@@ -56,9 +56,9 @@ export default class LoginPage extends Component {
 
         var data = {name, surname, email}
   
-        //let response = await api.post('/accessRequest/new', data);
+        let response = await api.post('/accessRequest/new', data);
 
-        console.log(data)
+        console.log(response.status)
 
         //changes the display of the sign-up panel from form to checkmark
         form.style.display = "none";
@@ -218,13 +218,13 @@ export default class LoginPage extends Component {
                             {/* sign-up overlay panel */}
                             <div className="overlay-panel overlay-left">
                                 <h1>Welcome Back!</h1>
-                                <p>To keep connected with us please signin with your personal info</p>
+                                <p>To access your account please signin with your personal info</p>
                                 <button className="level2" id="signIn">SIGN IN</button>
                             </div>
                             {/* sign-in overlay panel */}
                             <div className="overlay-panel overlay-right">
-                                <h1>Hello, Friend!</h1>
-                                <p>Enter your personal details and start journey with us</p>
+                                <h1>Welcome to  &#60;company name&#62;</h1>
+                                <p>Enter your personal details and start working with us</p>
                                 <button className="level2" id="signUp">SIGN UP</button>
                             </div>
                         </div>

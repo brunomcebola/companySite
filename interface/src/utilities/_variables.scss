@@ -1,4 +1,4 @@
-$color: 225;
+$color: 25;
 
 $firstColor: hsb($color, 83.14, 100);
 $firstDarkColor: hsb($color, 83.14, 80);
@@ -8,3 +8,10 @@ $thirdColor: hsb(0, 0, 70);
 $thirdDarkColor: hsb(0, 0, 50);
 
 $accent: hsb(175, 100, 58.82);
+
+//exports hsla mode of first color
+$l-hsl: (100/2) * (2 - (83.14/100));
+$s-hsl: (100 * 83.14) / if($l-hsl < 50, $l-hsl * 2, 200 - $l-hsl * 2);
+:export {
+    firstColor: hsla($color, $s-hsl, $l-hsl, 1);;
+}
