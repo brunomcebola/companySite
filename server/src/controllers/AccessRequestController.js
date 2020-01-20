@@ -4,6 +4,7 @@ const randomstring = require("randomstring");
 const aes256 = require('aes256');
 
 const AccessRequestingUser = mongoose.model('AccessRequestingUser');
+const User = mongoose.model('User');
 
 const settings = require('../../config')
 
@@ -54,7 +55,7 @@ module.exports = {
             
             await newAccessRequestingUser.save()
                 .then(() => {
-                    return res.status(201).send("Changes saved to database");
+                    return res.status(200).send("Changes saved to database");
                 })
                 .catch(() => {
                     return res.status(400).send("Unable to save to database");
@@ -65,6 +66,7 @@ module.exports = {
         }
     },
 
+    //falta status code
     async paginate(req, res) {
         var aux = [];
         var resp;
@@ -97,7 +99,7 @@ module.exports = {
     },
 
     async refuse(req, res) {
-        AccessRequestingUser.findOneAndDelete({'_id' : req.query.id })
+        await AccessRequestingUser.findOneAndDelete({'_id' : req.query.id })
             .then(() => {
                 res.status(200).send("Changes saved to data base")
             })
@@ -107,31 +109,27 @@ module.exports = {
     },
 
     async accept(req, res) {
-        let transporter = nodemailer.createTransport({
-            host: settings.smtp_host,
-            port: 465,
-            secure: true, // true for 465, false for other ports
-            auth: {
-              user: settings.email, // generated ethereal user
-              pass: settings.pass // generated ethereal password
-            }
-        });
+        let accessRequestingUser = await AccessRequestingUser.findOne({'_id' : req.query.id })
+        if(!accessRequestingUser) return res.status(400).send("Unable to save to database");
 
-        let pass = randomstring.generate({
+        let key = accessRequestingUser.salt;
+        let name = aes256.decrypt(key, accessRequestingUser.name)
+        let surname = aes256.decrypt(key, accessRequestingUser.surname)
+        let email = aes256.decrypt(key, accessRequestingUser.email)
+
+        let username = (name+surname).toLowerCase()
+        let password = randomstring.generate({
             length: 10,
             readable: true,
             charset: 'alphanumeric'
         });
 
-        let accessRequestingUser = await AccessRequestingUser.findOne({'_id' : req.query.id })
-        let key = accessRequestingUser.salt;
-
         let html = `
             <div style="height:250px; text-align: center">
                 <h2>Welcome to ${settings.name}!</h2>
                 <p>Your acount has been cleared. To start working you just need to use the credentials bellow.</p>
-                <p><strong>Username:</strong> ${(aes256.decrypt(key, accessRequestingUser.name)+aes256.decrypt(key, accessRequestingUser.surname)).toLowerCase()}</p>
-                <p><strong>Password:</strong> ${pass}</p>
+                <p><strong>Username:</strong> ${username}</p>
+                <p><strong>Password:</strong> ${password}</p>
                 <p>Access your account using the following button</p>
                 <a 
                     href=${settings.home_page} 
@@ -154,17 +152,63 @@ module.exports = {
             </div>
         `
 
-        await transporter.sendMail({
-            from: `${settings.name} <${settings.email}>`,
-            to: aes256.decrypt(key, accessRequestingUser.email), // list of receivers
-            subject: "Access request accepted", // Subject line
-            html: html // html body
-        })
-            .then(() => {
-                res.status(200).send("Email sent successfully")
+        
+        let newUser = new User(); 
+        newUser.setSalt();
+        newUser.name = aes256.encrypt(newUser.dataSalt, name);
+        newUser.surname = aes256.encrypt(newUser.dataSalt, surname);
+        newUser.email = aes256.encrypt(newUser.dataSalt, email);
+        newUser.setBasePassword(password)
+        newUser.setPassword(password)
+        newUser.setUsername(username);
+
+        let newUserId = newUser._id;
+
+        await newUser.save()
+            .then(async () => {
+                await AccessRequestingUser.findOneAndDelete({'_id' : req.query.id })
+                    .then(async () => {
+                        let transporter = nodemailer.createTransport({
+                            host: settings.smtp_host,
+                            port: 465,
+                            secure: true, // true for 465, false for other ports
+                            auth: {
+                              user: settings.email, // generated ethereal user
+                              pass: settings.pass // generated ethereal password
+                            }
+                        });
+
+                        await transporter.sendMail({
+                            from: `${settings.name} <${settings.email}>`,
+                            to: email, // list of receivers
+                            subject: "Access granted", // Subject line
+                            html: html // html body
+                        })
+                            .then(async () => {
+                                res.status(200).send("Changes saved to data base")
+                            })
+                            .catch(async () => {
+                                await User.findOneAndDelete({'_id' : newUserId })
+
+                                let newAccessRequestingUser = new AccessRequestingUser(); 
+                                newAccessRequestingUser.setSalt();
+                                newAccessRequestingUser.name = aes256.encrypt(newAccessRequestingUser.salt, name);
+                                newAccessRequestingUser.surname = aes256.encrypt(newAccessRequestingUser.salt, surname);
+                                newAccessRequestingUser.email = aes256.encrypt(newAccessRequestingUser.salt, email);
+                                newAccessRequestingUser.generateHash(email)
+                                newAccessRequestingUser.save()
+
+                                res.status(400).send("Unable to save to database")
+                            })
+                    })
+                    .catch(async () => {
+                        await User.findOneAndDelete({'_id' : newUserId })
+                        res.status(400).send("Unable to save to database")
+                    })
             })
-            .catch((err) => {
-                res.status(400).send(err)
+            .catch(() => {
+                return res.status(400).send("Unable to save to database");
             })
-    }
+    }            
+    
 }

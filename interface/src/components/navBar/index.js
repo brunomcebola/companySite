@@ -25,7 +25,7 @@ function disable(n, en) {
         }
 
         var stickyEl = document.querySelector('.me_sticky');
-        if(stickyEl != undefined){
+        if(stickyEl !== undefined){
             var myEl = document.getElementById('admin');
             var myDiv = document.querySelector('.dropdown-content.admin');
             var stickyPosition = stickyEl.getBoundingClientRect().top;
@@ -48,7 +48,7 @@ function disable(n, en) {
 }
 
 function redir(underline, n, en) {
-    if(underline != n+1 || en){window.location.href = link_list[n];}    
+    if(underline !== n+1 || en){window.location.href = link_list[n];}    
 }
 
 

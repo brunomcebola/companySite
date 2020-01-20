@@ -155,6 +155,8 @@ class PlanEl extends Component {
                     }
                 }
                 break;
+            default: 
+                break;
         }
 
         this.switchDayDisplay()
@@ -165,8 +167,8 @@ class PlanEl extends Component {
         let picker = document.querySelectorAll(".DayPicker");
         if(picker) {
             for(var i = 0; i< picker.length; i++){ 
-                if(picker[i].parentElement.getAttribute("index") == this.props.index){
-                    if(picker[i].style.display == 'none' || picker[i].style.display == "") {
+                if(picker[i].parentElement.getAttribute("index") === this.props.index){
+                    if(picker[i].style.display === 'none' || picker[i].style.display === "") {
                         picker[i].style.display = 'inline-block'
                     }
                     else {
@@ -179,15 +181,15 @@ class PlanEl extends Component {
             }
         }
 
-        if(n == 2) {
+        if(n === 2) {
             this.modifiers.disabled.to = new Date();
         }
-        else if (n == 3){
+        else if (n === 3){
             if(this.state.selectedDay1) {
                 this.modifiers.disabled.to = this.state.selectedDay1;
             }
             else{
-                let d = new Date;
+                let d = new Date();
                 d.setDate(d.getDate() + 1)
                 this.modifiers.disabled.to = d;
             }
@@ -199,7 +201,7 @@ class PlanEl extends Component {
     componentDidMount() {
         window.addEventListener("click", function(el){ 
             let aux = el.target, valid = true;
-            while(aux.className != "App") {       
+            while(aux.className !== "App") {       
                 if(aux.className === "DayPicker") valid = false;
                 aux = aux.parentElement;
                 if(!aux) break;

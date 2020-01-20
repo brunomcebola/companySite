@@ -28,6 +28,15 @@ export default class LoginPage extends Component {
     ******************************************************************************/
     login = async (e) => {
         e.preventDefault();
+
+        var username = document.getElementById("username-in").value;
+        var password = document.getElementById("pass-in").value;
+
+        let resp = await api.post('/users/login', {username, password});
+
+        if(resp.status === 200) {
+            window.location.href = '/home'
+        }
     }
 
     /******************************************************************************
@@ -174,7 +183,7 @@ export default class LoginPage extends Component {
                                     </div>
                                     {/* Surname input field */}
                                     <div className="group">      
-                                        <input id = "surname-up" className="inputMaterial" type="text" pattern="[a-zA-z ]*$"placeholder=" " required />
+                                        <input id = "surname-up" className="inputMaterial" type="text" pattern="[a-zA-z ]*$" placeholder=" " required />
                                         <span className="bar"></span>
                                         <label>Surname (ex: Doe)</label>
                                     </div>
@@ -197,9 +206,9 @@ export default class LoginPage extends Component {
                             <div className = "data">
                                 {/* Name input field */}
                                 <div className="group">      
-                                    <input className="inputMaterial" type="email"  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" placeholder=" " required />
+                                    <input id = "username-in" className="inputMaterial" type="text" pattern="[a-zA-z ]*$" placeholder=" " required />
                                     <span className="bar"></span>
-                                    <label>Email (ex: example@{settings.name.substr(0, settings.name.indexOf(" ")).toLowerCase()}.com)</label>
+                                    <label>Username (ex: {(settings.name.substr(0, settings.name.indexOf(" "))+settings.name.substr(settings.name.indexOf(" ")+1, settings.name.length)).toLowerCase()})</label>
                                 </div>
                                 {/* Password input field */}
                                 <div className="group">      
