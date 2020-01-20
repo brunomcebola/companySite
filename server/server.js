@@ -7,7 +7,6 @@ const PORT = process.env.PORT || 3001
 
 const app = express();
 app.use(express.json());
-app.use(express.urlencoded());
 app.use(cors({}));
 
 //ligação à base de dados

@@ -131,7 +131,7 @@ export default class PlanList extends Component {
                 <button className = "level1" id = "new" onClick = {() => this.new()}>Create new plan</button>
                 {this.state.elements.map(element => element)}
                 <button className = "level2" id = "load" onClick = {() => this.add()} >Load more plans</button>
-                <CheckModal phrase = "Delete plan?" check = {this.del} cancel = {this.cancel}/>
+                <CheckModal phrase = "Delete plan?" button1 = "Delete" check = {this.del} button2 = "Cancel" cancel = {this.cancel}/>
             </div>
         )
     }

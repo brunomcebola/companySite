@@ -43,9 +43,12 @@ module.exports = {
     async new(req, res) {
         let newAccessRequestingUser = new AccessRequestingUser(); 
 
-        let checker = await AccessRequestingUser.find({hash: newAccessRequestingUser.generateHash(req.body.email)})
+        newAccessRequestingUser.generateHash(req.body.email)
 
-        if(!checker[0]){
+        let checker1 = await AccessRequestingUser.find({hash: newAccessRequestingUser.hash})
+        let checker2 = await User.find({hash: newAccessRequestingUser.hash})
+
+        if(!checker1[0] && !checker2[0]){
             
             //informação encriptada
             newAccessRequestingUser.setSalt();
@@ -158,6 +161,7 @@ module.exports = {
         newUser.name = aes256.encrypt(newUser.dataSalt, name);
         newUser.surname = aes256.encrypt(newUser.dataSalt, surname);
         newUser.email = aes256.encrypt(newUser.dataSalt, email);
+        newUser.hash = accessRequestingUser.hash;
         newUser.setBasePassword(password)
         newUser.setPassword(password)
         newUser.setUsername(username);

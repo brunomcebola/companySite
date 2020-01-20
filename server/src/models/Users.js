@@ -51,6 +51,10 @@ const UsersSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    hash: {
+        type: String,
+        required: true
+    }
 }); 
 
 UsersSchema.methods.setBasePassword = function(password) {

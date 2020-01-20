@@ -19,7 +19,7 @@ const Routes = () => (
                 {/* defines which page to be rendered */}
                 <Route exact path='/' component={LoginPage} />   {/* login page */}
                 <Route exact path='/profile' component={ProfilePage} />   {/* user profile */}
-                <Route exact path='/monthlyPlan' component={PlanListPage} />   {/* monthly plan */}
+                <Route exact path='/monthlyPlans' component={PlanListPage} />   {/* monthly plan */}
                 <Route exact path='/monthlyPlan/:plan' component={PlanPage} />   {/* monthly plan */}
                 <Route exact path='/usersAccessRequest' component={usersAccessRequestPage} />   {/* monthly plan */}
                 <Route component={DefaultPage} />   {/* default page redirection */}

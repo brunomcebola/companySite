@@ -2,8 +2,9 @@ import React from 'react';
 
 import './styles.scss';
 
-var link_list = ["/home", "/profile", "/schedule", "/monthlyPlan", "/inventory",
-                 "/activityPlanning", "/fileSharing", "/teamManagement", "/usersAccessRequest"];
+var link_list = ["/home", "/profile", "/schedule", "/monthlyPlans", "/inventory",
+                 "/activityPlanning", "/fileSharing", "/teamManagement", "/usersAccessRequest",
+                 "/analytics"];
 
 function disable(n, en) {
     window.onload = function(){
@@ -51,6 +52,10 @@ function redir(underline, n, en) {
     if(underline !== n+1 || en){window.location.href = link_list[n];}    
 }
 
+function signout(){
+    localStorage.removeItem('id');
+    window.location.href = '/';
+}
 
 const NavBar = ({underline, enable = 0}) =>
     <nav className="main_nav" id="nav">
@@ -62,7 +67,7 @@ const NavBar = ({underline, enable = 0}) =>
             <ul className="menu center">
                 <li><a className="hover" id="menu2" onClick={() => redir(underline, 1, enable)}>Profile</a></li>
                 <li><a className="hover" id="menu3" onClick={() => redir(underline, 2, enable)}>Schedule</a></li>
-                <li><a className="hover" id="menu4" onClick={() => redir(underline, 3, enable)}>Monthly plan</a></li>
+                <li><a className="hover" id="menu4" onClick={() => redir(underline, 3, enable)}>Monthly plans</a></li>
                 <div className="dropdown">
                     <li className="dropbtn"><a className="hover" id="other">Other</a></li>
                     <div className="dropdown-content main">
@@ -73,12 +78,13 @@ const NavBar = ({underline, enable = 0}) =>
                         <div className="dropdown-content admin">
                             <a className="hover" id="menu8" onClick={() => redir(underline, 7, enable)}>Team management</a>
                             <a className="hover" id="menu9" onClick={() => redir(underline, 8, enable)}>Users access request</a>
+                            <a className="hover" id="menu10" onClick={() => redir(underline, 9, enable)}>Analytics</a>
                         </div>
                     </div>
                 </div>
             </ul>
             <ul className="menu right">
-                <li><a className="hover">Sign out <i className="fa fa-sign-out"></i></a></li>
+                <li><a className="hover" onClick = {() => signout()}>Sign out <i className="fa fa-sign-out"></i></a></li>
             </ul>
         </div>
     </nav>

@@ -9,6 +9,7 @@ import _variables from '../../utilities/_variables.scss';
 
 import NavBar from '../../components/navBar';
 import Footer from '../../components/footer';
+import CheckModal from '../../components/checkModal'
 
 export default class usersAccessRequestPage extends Component {
     constructor(props) {
@@ -26,7 +27,10 @@ export default class usersAccessRequestPage extends Component {
 				  width: '80%',
 				  marginTop: '2%'
 			},
-			
+			id: null,
+			action: null,
+			phrase: null,
+			button1: null
 		}
 
 		this.theme = createMuiTheme({
@@ -40,6 +44,32 @@ export default class usersAccessRequestPage extends Component {
 			}
 		});
 	}
+
+	showModal = () => {
+		var checkModal = document.querySelector("[name=CheckModal]");
+		checkModal.style.display = "flex";
+	}
+
+	refuse = async () => {
+		await api.delete(`/accessRequest/refuse?id=${this.state.id}`);
+		this.tableRef.current && this.tableRef.current.onQueryChange()
+
+        var checkModal = document.querySelector("[name=CheckModal]");
+        checkModal.style.display = "none";
+	}
+	
+	accept = async () =>{
+		await api.get(`/accessRequest/accept?id=${this.state.id}`);
+		this.tableRef.current && this.tableRef.current.onQueryChange()
+
+		var checkModal = document.querySelector("[name=CheckModal]");
+        checkModal.style.display = "none";
+	}
+
+	cancel = () => {
+        var checkModal = document.querySelector("[name=CheckModal]");
+        checkModal.style.display = "none";
+    }
 
     render() {
         return (
@@ -76,20 +106,16 @@ export default class usersAccessRequestPage extends Component {
 									icon: 'check',
 									tooltip: 'Accept User',
 									onClick: async (event, rowData) => {
-										if(window.confirm(`Do you want to grant access to ${rowData.name} ${rowData.surname} - ${rowData.email}`)){
-											await api.get(`/accessRequest/accept?id=${rowData._id}`);
-											this.tableRef.current && this.tableRef.current.onQueryChange()
-										}
+										this.setState({action: this.accept, phrase: `Grant access to ${rowData.name} ${rowData.surname}?`, id: rowData._id, button1: 'Grant'})
+										this.showModal()
 									}
 								},
 								{
 									icon: 'clear',
 									tooltip: 'Decline User',
 									onClick: async (event, rowData) => {
-										if(window.confirm(`Do you want to delete ${rowData.name} ${rowData.surname} - ${rowData.email}`)){
-											await api.delete(`/accessRequest/refuse?id=${rowData._id}`);
-											this.tableRef.current && this.tableRef.current.onQueryChange()
-										}
+										this.setState({action: this.refuse, phrase: `Refuse access to ${rowData.name} ${rowData.surname}?`, id: rowData._id, button1: 'Refuse'})
+										this.showModal()
 									}
 								},
 								{
@@ -110,7 +136,8 @@ export default class usersAccessRequestPage extends Component {
 							}}
 						/>
 					</MuiThemeProvider>
-                </div>
+					<CheckModal phrase = {this.state.phrase} button1 = {this.state.button1} check = {this.state.action} button2 = "Cancel" cancel = {this.cancel}/>
+				</div>
                 <Footer />
             </div>
         )

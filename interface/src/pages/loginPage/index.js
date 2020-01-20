@@ -35,7 +35,8 @@ export default class LoginPage extends Component {
         let resp = await api.post('/users/login', {username, password});
 
         if(resp.status === 200) {
-            window.location.href = '/home'
+            localStorage.setItem('id', resp.data);
+            window.location.href = '/usersAccessRequest'
         }
     }
 
