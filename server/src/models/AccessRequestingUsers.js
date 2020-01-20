@@ -19,7 +19,24 @@ const AccessRequestingUserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    salt: {
+        type: String,
+        required: true
+    },
+    hash: {
+        type: String,
+        required: true
+    }
 }); 
+
+AccessRequestingUserSchema.methods.setSalt = function() {
+    this.salt = crypto.randomBytes(16).toString('hex');  
+}
+
+AccessRequestingUserSchema.methods.generateHash = function(email) {
+    this.hash = crypto.pbkdf2Sync(email, email, 1000, 64, `sha512`).toString(`hex`);
+    return this.hash
+}
 
 AccessRequestingUserSchema.plugin(mongoosePaginate);
 

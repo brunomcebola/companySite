@@ -107,6 +107,10 @@
     left: 160px;
 }
 
+.main_nav .dropdown .dropdown-content.admin a {
+    width: 180px
+}
+
 .main_nav .dropdown:hover .dropdown-content.main{
     display: block;
 }

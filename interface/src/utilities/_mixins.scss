@@ -8,13 +8,13 @@
 
 //login stuff
 
-@mixin circle-loader-dash() {
+@mixin circle-loader-dash($color) {
     content:"";
 	position: absolute;
 	top: 45%;
 	height: 0.5em;
 	width: 0;
-	border-bottom: 2px solid #009688;
+	border-bottom: 2px solid $color;
 	animation-duration: 600ms;
 	animation-timing-function: ease-out;
 	animation-fill-mode: forwards;
@@ -97,24 +97,24 @@
     }
 }
 
-@mixin circle-loader-animation() {
+@mixin circle-loader-animation($color) {
     @keyframes circle-loader {
         100% {
-            border-color: #009688;
+            border-color: $color;
             opacity: 1;
         }
     }
     
     @-webkit-keyframes circle-loader {
         100% {
-            border-color: #009688;
+            border-color: $color;
             opacity: 1;
         }
     }
     
     @-moz-keyframes circle-loader {
         100% {
-            border-color: #009688;
+            border-color: $color;
             opacity: 1;
         }
     }

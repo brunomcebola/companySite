@@ -133,12 +133,12 @@
 					animation-name: circle-loader;
 
 					&:after {
-						@include circle-loader-dash;
+						@include circle-loader-dash($accent);
 						left: 100%;
 					}  
 					
 					&:before {
-						@include circle-loader-dash;
+						@include circle-loader-dash($accent);
 						right: 100%;
 					} 
 					@include circle-loader-dash-animation;
@@ -165,7 +165,7 @@
 						}
 						@include circle-loader-checkmark-animation;
 					}
-				@include circle-loader-animation;	
+				@include circle-loader-animation($accent);	
 				}
 			}
 		}
@@ -189,6 +189,12 @@
 					&.pass {
 						width: 270px;
 						float: left; 
+					}
+
+					&#name-up, &#surname-up {
+						~ .bar:before, ~.bar:after {
+							transform: translateY(1.5px);
+						} 
 					}
 
 					&:focus {

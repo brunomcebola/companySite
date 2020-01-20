@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import CheckModal from '../checkModal'
+import _variables from '../../utilities/_variables.scss';
 
 import './styles.scss';
 
@@ -43,7 +44,7 @@ class PlanListEl extends Component {
     setEditable = (e) => {
         let el = document.querySelector("#"+e)
         el.setAttribute("contenteditable", "true");
-        el.style.borderBottomColor = "#009688";
+        el.style.borderBottomColor = _variables.accent;
         el.style.transform = "translateY(-5px)";
         el.focus();
         newClick = el.parentElement.getAttribute("id");

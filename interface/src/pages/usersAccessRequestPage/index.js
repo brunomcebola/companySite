@@ -10,7 +10,7 @@ import _variables from '../../utilities/_variables.scss';
 import NavBar from '../../components/navBar';
 import Footer from '../../components/footer';
 
-export default class UsersManagementPage extends Component {
+export default class usersAccessRequestPage extends Component {
     constructor(props) {
 		super(props);
 
@@ -75,7 +75,12 @@ export default class UsersManagementPage extends Component {
 								{
 									icon: 'check',
 									tooltip: 'Accept User',
-									onClick: (event, rowData) => alert("You saved " + rowData.name)
+									onClick: async (event, rowData) => {
+										if(window.confirm(`Do you want to grant access to ${rowData.name} ${rowData.surname} - ${rowData.email}`)){
+											await api.get(`/accessRequest/accept?id=${rowData._id}`);
+											this.tableRef.current && this.tableRef.current.onQueryChange()
+										}
+									}
 								},
 								{
 									icon: 'clear',

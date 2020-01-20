@@ -7,6 +7,7 @@
 import React, { Component } from 'react';
 
 import api from '../../services/api';
+import settings from '../../config'
 
 import './styles.scss';
 
@@ -162,7 +163,7 @@ export default class LoginPage extends Component {
                             </div>
                             {/* sign-up form */}
                             <div id="signup-form">
-                                <h1>Request access</h1>
+                                <h1>Access request</h1>
                                 {/* data input area */}
                                 <div className = "data">
                                     {/* Name input field */}
@@ -181,7 +182,7 @@ export default class LoginPage extends Component {
                                     <div className="group">      
                                         <input id = "email-up" className="inputMaterial" type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" placeholder=" " required />
                                         <span className="bar email"></span>
-                                        <label>Email (ex: example@cla.com)</label>
+                                        <label>Email (ex: example@{settings.name.substr(0, settings.name.indexOf(" ")).toLowerCase()}.com)</label>
                                     </div>
                                 </div>
                                 <button className = "level1" type = "submit">SIGN UP</button>
@@ -198,7 +199,7 @@ export default class LoginPage extends Component {
                                 <div className="group">      
                                     <input className="inputMaterial" type="email"  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" placeholder=" " required />
                                     <span className="bar"></span>
-                                    <label>Email (ex: example@cla.com)</label>
+                                    <label>Email (ex: example@{settings.name.substr(0, settings.name.indexOf(" ")).toLowerCase()}.com)</label>
                                 </div>
                                 {/* Password input field */}
                                 <div className="group">      
@@ -223,7 +224,7 @@ export default class LoginPage extends Component {
                             </div>
                             {/* sign-in overlay panel */}
                             <div className="overlay-panel overlay-right">
-                                <h1>Welcome to  &#60;company name&#62;</h1>
+                                <h1>Welcome to <br/>{settings.name}</h1>
                                 <p>Enter your personal details and start working with us</p>
                                 <button className="level2" id="signUp">SIGN UP</button>
                             </div>

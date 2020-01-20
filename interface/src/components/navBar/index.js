@@ -3,7 +3,7 @@ import React from 'react';
 import './styles.scss';
 
 var link_list = ["/home", "/profile", "/schedule", "/monthlyPlan", "/inventory",
-                 "/activityPlanning", "/fileSharing", "/teamManagement", "/usersManagement"];
+                 "/activityPlanning", "/fileSharing", "/teamManagement", "/usersAccessRequest"];
 
 function disable(n, en) {
     window.onload = function(){
@@ -72,7 +72,7 @@ const NavBar = ({underline, enable = 0}) =>
                         <a className="hover" id="admin"><span>Administration </span><i className ="fa fa-angle-right"></i></a>
                         <div className="dropdown-content admin">
                             <a className="hover" id="menu8" onClick={() => redir(underline, 7, enable)}>Team management</a>
-                            <a className="hover" id="menu9" onClick={() => redir(underline, 8, enable)}>Users management</a>
+                            <a className="hover" id="menu9" onClick={() => redir(underline, 8, enable)}>Users access request</a>
                         </div>
                     </div>
                 </div>
