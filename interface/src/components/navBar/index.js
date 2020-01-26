@@ -1,28 +1,57 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import './styles.scss';
+import api from '../../services/api'
+import settings from '../../config'
 
-var link_list = ["/home", "/profile", "/schedule", "/monthlyPlans", "/inventory",
-                 "/activityPlanning", "/fileSharing", "/teamManagement", "/usersAccessRequest",
-                 "/analytics"];
+import avatar from '.././../images/other.png';
+import logo from '../../images/logo.png'
 
-function disable(n, en) {
-    window.onload = function(){
+var link_list = ["/home", "/schedule", "/monthlyPlans", "/inventory",
+                 "/activityPlanning", "/fileSharing", "/findUser", "/usersManagement", "/usersAccessRequest",
+                 "/analytics", "/profile"];
+
+export default class NavBar extends Component {
+    constructor(props) {
+        super(props);
+          this.state = {
+            selectedFile: null,
+            img: '',
+            img_empty: true,
+            permissions: 0
+          }
+    }
+
+    arrayBufferToBase64 = (buffer) => {
+        var binary = '';
+        var bytes = [].slice.call(new Uint8Array(buffer));
+        bytes.forEach((b) => binary += String.fromCharCode(b));
+        return window.btoa(binary);
+    };
+
+    disable = (n, en = 0) => {
         var el = document.getElementById("menu" + n);
         if(el === undefined || el === null) return
-        el.style.textDecoration = "underline";
         if(!en){
             el.style.cursor = "default";
             el.classList.remove('hover');
         }
-        if(n > 4) {
+        if(n >= 11) {
+            el.style.textDecoration = 'underline'
+        }
+        else if(n > 3) {
+            el.style.textDecoration = 'underline'
+            
             var other = document.getElementById("other");
-            other.style.textDecoration = "underline";
+            other.style.borderBottomColor = "#fff";
 
             if(n > 7) {
                 var admin = document.getElementById("admin");
                 admin.childNodes[0].style.textDecoration = "underline";
             }
+        }
+        else {
+            el.style.borderBottomColor = "#fff";
         }
 
         var stickyEl = document.querySelector('.me_sticky');
@@ -42,51 +71,130 @@ function disable(n, en) {
                     stickyEl.style.zIndex = '';
                 }
             });
-            myDiv.onmouseover = function() {myEl.style.backgroundColor = '#f1f1f1'};
-            myDiv.onmouseleave = function() {myEl.style.backgroundColor = 'transparent'};
+            if(myEl){
+                myDiv.onmouseover = function() {myEl.style.backgroundColor = '#f1f1f1'};
+                myDiv.onmouseleave = function() {myEl.style.backgroundColor = 'transparent'};
+            }
         }
-    }; 
-}
+    }
 
-function redir(underline, n, en) {
-    if(underline !== n+1 || en){window.location.href = link_list[n];}    
-}
+    redir = (underline, n, en = 0) => {
+        if(underline != n+1 || en){window.location.href = link_list[n];}    
+    }
 
-function signout(){
-    localStorage.removeItem('id');
-    window.location.href = '/';
-}
+    signout = () => {
+        localStorage.removeItem('id');
+        window.location.href = '/';
+    }
 
-const NavBar = ({underline, enable = 0}) =>
-    <nav className="main_nav" id="nav">
-        {disable(underline, enable)}
-        <div className="main_nav_wrap me_sticky">
-            <ul className="menu left">
-                <li><a className="hover" id="menu1" onClick={() => redir(underline, 0, enable)}>Home</a></li>
-            </ul>
-            <ul className="menu center">
-                <li><a className="hover" id="menu2" onClick={() => redir(underline, 1, enable)}>Profile</a></li>
-                <li><a className="hover" id="menu3" onClick={() => redir(underline, 2, enable)}>Schedule</a></li>
-                <li><a className="hover" id="menu4" onClick={() => redir(underline, 3, enable)}>Monthly plans</a></li>
-                <div className="dropdown">
-                    <li className="dropbtn"><a className="hover" id="other">Other</a></li>
-                    <div className="dropdown-content main">
-                        <a className="hover" id="menu5" onClick={() => redir(underline, 4, enable)}>Inventory</a>
-                        <a className="hover" id="menu6" onClick={() => redir(underline, 5, enable)}>Activity planning</a>
-                        <a className="hover" id="menu7" onClick={() => redir(underline, 6, enable)}>File sharing</a>
-                        <a className="hover" id="admin"><span>Administration </span><i className ="fa fa-angle-right"></i></a>
-                        <div className="dropdown-content admin">
-                            <a className="hover" id="menu8" onClick={() => redir(underline, 7, enable)}>Team management</a>
-                            <a className="hover" id="menu9" onClick={() => redir(underline, 8, enable)}>Users access request</a>
-                            <a className="hover" id="menu10" onClick={() => redir(underline, 9, enable)}>Analytics</a>
+    drop = () => {
+        let el = document.querySelector('.menu.right .dropdown')
+        el.childNodes[0].childNodes[0].style.backgroundColor = "#fff";
+        el.childNodes[0].childNodes[0].style.color = "#000";
+        el.childNodes[0].childNodes[0].childNodes[0].style.filter = "invert(0%)";
+        el.childNodes[1].style.display = 'block'
+        el.childNodes[0].childNodes[0].querySelector('i').classList.remove('rotate_down')
+        el.childNodes[0].childNodes[0].querySelector('i').classList.add('rotate_up')
+    }
+    
+    getName = async () => {
+        let id = localStorage.getItem('id');
+        let name = await api.get(`/users/name?id=${id}`);
+        var el = document.querySelector('#name');
+        el.innerHTML = name.data;
+    }
+
+    getPermissions = async () => {
+        let id = localStorage.getItem('id');
+        let permissions = await api.get(`/users/permissions?id=${id}`);
+        this.setState({permissions: permissions.data})
+        this.forceUpdate()
+    }
+
+    componentDidMount() {
+        this.getName();
+        this.getPermissions();
+        this.disable(this.props.underline, this.props.enable);
+
+        window.addEventListener("click", function(l){
+            let el = document.querySelector('.menu.right .dropdown')
+        
+            if(el && l.target.getAttribute('id') !== 'a-av' && l.target.getAttribute('id') !== 'img-av' && l.target && l.target.parentElement &&
+               l.target.getAttribute('id') !== 'i-av' && l.target.parentElement.getAttribute('id') !== 'dc-av'){
+                el.childNodes[0].childNodes[0].style.backgroundColor = "transparent";
+                el.childNodes[0].childNodes[0].style.color = "#fff";
+                el.childNodes[0].childNodes[0].childNodes[0].style.filter = this.state.img_empty ? "invert(100%)" : null;
+                el.childNodes[1].style.display = 'none';
+                el.childNodes[0].childNodes[0].querySelector('i').classList.remove('rotate_up')
+                el.childNodes[0].childNodes[0].querySelector('i').classList.add('rotate_down')
+            }
+        }.bind(this));
+
+        fetch(`${settings.api_link}users/retrieveProfilePic?userId=${localStorage.getItem('id')}`)
+            .then((response) => response.json())
+            .catch(() => {})
+            .then((data) => {
+                if(data) {
+                    var base64Flag = 'data:image/jpeg;base64,';
+                    var imageStr = this.arrayBufferToBase64(data.img.data.data);
+                    this.setState({
+                        img: base64Flag + imageStr,
+                        img_empty: false
+                    })
+                }
+            })
+    }
+
+    componentDidUpdate(){
+        this.disable(this.props.underline, this.props.enable);
+    }
+
+    render() {
+        return(
+            <nav className="main_nav" id="navBar">
+                <div className="main_nav_wrap me_sticky">
+                    <ul className="menu left">
+                        <li><a><img src = {logo}/></a></li>
+                    </ul>
+                    <ul className="menu center">
+                        <li><a className="hover" id="menu1" onClick={() => this.redir(this.props.underline, 0, this.props.enable)}>Home</a></li>
+                        <li><a className="hover" id="menu2" onClick={() => this.redir(this.props.underline, 1, this.props.enable)}>Schedule</a></li>
+                        <li><a className="hover" id="menu3" onClick={() => this.redir(this.props.underline, 2, this.props.enable)}>Monthly plans</a></li>
+                        <div className="dropdown">
+                            <li className="dropbtn"><a className="hover" id="other">Other <i className="fa fa-angle-down" id = 'i-av'></i></a></li>
+                            <div className="dropdown-content main">
+                                <a className="hover" id="menu4" onClick={() => this.redir(this.props.underline, 3, this.props.enable)}>Inventory</a>
+                                <a className="hover" id="menu5" onClick={() => this.redir(this.props.underline, 4, this.props.enable)}>Activity planning</a>
+                                <a className="hover" id="menu6" onClick={() => this.redir(this.props.underline, 5, this.props.enable)}>File sharing</a>
+                                <a className="hover" id="menu7" onClick={() => this.redir(this.props.underline, 6, this.props.enable)}>Find user</a>
+                                {this.state.permissions === 2 ?
+                                    <span>
+                                        <a className="hover" id="admin"><span>Administration </span><i className ="fa fa-angle-right"></i></a>
+                                        <div className="dropdown-content admin">
+                                            <a className="hover" id="menu8" onClick={() => this.redir(this.props.underline, 7, this.props.enable)}>Users management</a>
+                                            <a className="hover" id="menu9" onClick={() => this.redir(this.props.underline, 8, this.props.enable)}>Users access request</a>
+                                            <a className="hover" id="menu10" onClick={() => this.redir(this.props.underline, 9, this.props.enable)}>Analytics</a>
+                                        </div>
+                                    </span>
+                                : null}
+                            </div>
                         </div>
-                    </div>
+                    </ul>
+                    <ul className="menu right">
+                        <div className="dropdown">
+                            <li className="dropbtn"><a className="hover" onClick = {() => this.drop()} id = 'a-av'><img src={this.state.img ? this.state.img : avatar} id = {`img-av${this.state.img_empty ? ' empty': ''}`}/> <i className="fa fa-angle-down" id = 'i-av'></i></a></li>
+                            <div className="dropdown-content" id = 'dc-av'>
+                                <p>Signed in as</p>
+                                <p><strong id = "name"></strong></p>
+                                <a className="hover" id="menu11" onClick={() => this.redir(this.props.underline, 10, this.props.enable)}>Profile</a>
+                                <a className="hover" id="menu12">Help</a>
+                                <a className="hover" id="menu13">Settings</a>
+                                <a className="hover" id="menu" onClick = {() => this.signout()}><span>Sign out</span><i className="fa fa-sign-out"></i></a>
+                            </div>
+                        </div>
+                    </ul>
                 </div>
-            </ul>
-            <ul className="menu right">
-                <li><a className="hover" onClick = {() => signout()}>Sign out <i className="fa fa-sign-out"></i></a></li>
-            </ul>
-        </div>
-    </nav>
-
-export default NavBar;
+            </nav>
+        )
+    }
+}

@@ -5,6 +5,10 @@
 ******************************************************************************/
 
 import React, { Component } from 'react';
+//import ImageUploader from 'react-images-upload';
+
+import api from '../../services/api'
+import settings from '../../config'
 
 import './styles.scss';
 
@@ -12,6 +16,30 @@ import Footer from '../../components/footer';
 import NavBar from '../../components/navBar';
 
 export default class ProfilePage extends Component {
+    constructor(props) {
+        super(props);
+          this.state = {
+            selectedFile: null,
+            img: '',
+          }
+    }
+
+    onClickHandler = () => {
+        const data = new FormData()
+        data.append('file', this.state.selectedFile)
+        api.put(`users/uploadImage?id=${localStorage.getItem('id')}`, data, {})
+            .then(res => {})
+
+        this.forceUpdate()
+    }
+
+    arrayBufferToBase64 = (buffer) => {
+        var binary = '';
+        var bytes = [].slice.call(new Uint8Array(buffer));
+        bytes.forEach((b) => binary += String.fromCharCode(b));
+        return window.btoa(binary);
+    };
+
     preview = (event) => {
         var reader = new FileReader();
         reader.onload = function() {
@@ -25,6 +53,10 @@ export default class ProfilePage extends Component {
             output.src = reader.result;
         }
         reader.readAsDataURL(event.target.files[0]);
+        this.setState({
+            selectedFile: event.target.files[0],
+            loaded: 0,
+        })  
     }
     
     componentDidMount() {
@@ -41,18 +73,34 @@ export default class ProfilePage extends Component {
                 follow.innerHTML = "Follow";
             }
         });
+
+        fetch(`${settings.api_link}users/retrieveProfilePic?userId=${localStorage.getItem('id')}`)
+            .then((response) => response.json())
+            .catch(() => {})
+            .then((data) => {
+                if(data) {
+                    var base64Flag = 'data:image/jpeg;base64,';
+                    var imageStr = this.arrayBufferToBase64(data.img.data.data);
+                    this.setState({
+                        img: base64Flag + imageStr
+                    })
+                }
+            })
     }
 
     render() {
         return(
-            <div id="profile-general">
-                <NavBar underline = "2" />
+            <div id="profilePage">
+                <NavBar underline="11"/>
+
+                <button type="button" class="btn btn-success btn-block" onClick={this.onClickHandler}>Upload profile photo</button> 
+
                 <div className = "profile-container">
                     <div className = "profile">
                         <div className = "profile-pic">
                             <label for="file-input">
                                 <i id = "cam" class="fa fa-camera" aria-hidden="true"></i>
-                                <img id = "pic" alt = "profile-pic"></img>
+                                <img id = "pic" alt = "profile-pic" src={this.state.img}></img>
                             </label>
                             <input id="file-input" type="file" onChange = {event => this.preview(event)}/>
                         </div>

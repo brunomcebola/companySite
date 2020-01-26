@@ -18,14 +18,21 @@
     "crypto": "^1.0.1",
     "easy-color": "^1.0.4",
     "express": "^4.17.1",
+    "express-fileupload": "^1.1.6",
+    "fs": "^0.0.1-security",
     "hsl-to-rgb": "^1.0.0",
     "mongoose": "^5.6.10",
     "mongoose-paginate": "^5.0.3",
+    "multer": "^1.4.2",
     "nodemailer": "^6.4.2",
     "paginate-array": "^2.1.0",
     "password-hash": "^1.2.2",
+    "path": "^0.12.7",
     "randomstring": "^1.1.5",
-    "require-dir": "^1.2.0"
+    "require-dir": "^1.2.0",
+    "sort-array-objects": "^3.0.0",
+    "sort-json-array": "^0.1.7",
+    "sort-objects-array": "^1.7.1"
   },
   "devDependencies": {
     "nodemon": "^1.19.1"

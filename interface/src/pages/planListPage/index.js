@@ -16,7 +16,7 @@ export default class PlanListPage extends Component {
     render() {
         return(
             <div id="planListPage">
-                <NavBar underline = "4" />
+                <NavBar underline = "3" />
                 <PlanList />
                 <Footer />
             </div>

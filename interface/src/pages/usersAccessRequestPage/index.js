@@ -11,7 +11,7 @@ import NavBar from '../../components/navBar';
 import Footer from '../../components/footer';
 import CheckModal from '../../components/checkModal'
 
-export default class usersAccessRequestPage extends Component {
+export default class UsersAccessRequestPage extends Component {
     constructor(props) {
 		super(props);
 
@@ -73,7 +73,7 @@ export default class usersAccessRequestPage extends Component {
 
     render() {
         return (
-            <div id = "usersManagementPage">
+            <div id = "usersAccessRequestPage">
                 <NavBar underline = "9"/>
                 <div id = "MaterilTableContainer">
 					<MuiThemeProvider theme={this.theme}>
@@ -82,11 +82,15 @@ export default class usersAccessRequestPage extends Component {
 							tableRef={this.tableRef}
 							columns={this.state.columns}
 							data={query => 
+								
 								/* TODO: a pesquisa não está a funcionar */
 								new Promise((resolve, reject) => {
+									console.log(query)
 									let url = 'http://localhost:3001/accessRequest/'
 									url += 'paginate?per_page=' + query.pageSize 
 									url += '&page=' + (query.page + 1) 
+									url += '&order=' + (query.orderBy ? query.orderBy.field : '')
+									url += '&dir=' + (query.orderDirection === 'asc' ? 'asc' : query.orderDirection === 'desc' ? 'des' : null)
 									url += '&search=' + query.search
 										
 									fetch(url)

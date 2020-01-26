@@ -10,7 +10,8 @@ import LoginPage from './pages/loginPage';
 import ProfilePage from './pages/profilePage';
 import PlanListPage from './pages/planListPage';
 import PlanPage from './pages/planPage';
-import usersAccessRequestPage from './pages/usersAccessRequestPage';
+import UsersAccessRequestPage from './pages/usersAccessRequestPage';
+import UsersManagementPage from './pages/usersManagementPage';
 
 const Routes = () => (
     <CookiesProvider>
@@ -20,8 +21,9 @@ const Routes = () => (
                 <Route exact path='/' component={LoginPage} />   {/* login page */}
                 <Route exact path='/profile' component={ProfilePage} />   {/* user profile */}
                 <Route exact path='/monthlyPlans' component={PlanListPage} />   {/* monthly plan */}
-                <Route exact path='/monthlyPlan/:plan' component={PlanPage} />   {/* monthly plan */}
-                <Route exact path='/usersAccessRequest' component={usersAccessRequestPage} />   {/* monthly plan */}
+                <Route exact path='/monthlyPlans/:plan' component={PlanPage} />   {/* monthly plan */}
+                <Route exact path='/usersAccessRequest' component={UsersAccessRequestPage} />   {/* monthly plan */}
+                <Route exact path='/usersManagement' component={UsersManagementPage} />   {/* monthly plan */}
                 <Route component={DefaultPage} />   {/* default page redirection */}
             </Switch>
         </BrowserRouter>

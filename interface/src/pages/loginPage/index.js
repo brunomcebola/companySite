@@ -36,7 +36,7 @@ export default class LoginPage extends Component {
 
         if(resp.status === 200) {
             localStorage.setItem('id', resp.data);
-            window.location.href = '/usersAccessRequest'
+            window.location.href = '/monthlyPlans'
         }
     }
 

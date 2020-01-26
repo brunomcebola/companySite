@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const nodemailer = require("nodemailer");
 const randomstring = require("randomstring");
 const aes256 = require('aes256');
+const sortJsonArray = require('sort-json-array');
+
 
 const AccessRequestingUser = mongoose.model('AccessRequestingUser');
 const User = mongoose.model('User');
@@ -9,35 +11,6 @@ const User = mongoose.model('User');
 const settings = require('../../config')
 
 //elasticemail smtp pass: 4381F496BF133EDD4EE81BB531347C3E2D19
-
-function Paginator(items, page, per_page) {
-
-    var aux = []
- 
-    var page = page || 1
-    var per_page = per_page || 10
-    var offset = (page - 1) * per_page
-   
-    var accessRequestingUsers = items.slice(offset).slice(0, per_page)
-    accessRequestingUsers.map(accessRequestingUser => {
-        aux.push({
-            _id: accessRequestingUser._id,
-            name: aes256.decrypt(accessRequestingUser.salt, accessRequestingUser.name),
-            surname: aes256.decrypt(accessRequestingUser.salt, accessRequestingUser.surname),
-            email: aes256.decrypt(accessRequestingUser.salt, accessRequestingUser.email),
-        })
-    })
-    var total_pages = Math.ceil(items.length / per_page);
-    return {
-        page: page,
-        per_page: per_page,
-        pre_page: page - 1 ? page - 1 : null,
-        next_page: (total_pages > page) ? page + 1 : null,
-        total: items.length,
-        total_pages: total_pages,
-        docs: aux
-    };
-}
 
 module.exports = {
     async new(req, res) {
@@ -69,36 +42,51 @@ module.exports = {
         }
     },
 
-    //falta status code
+    //falta status code; falta ordenar para a procura
     async paginate(req, res) {
-        var aux = [];
-        var resp;
-        const { per_page, page, search } = req.query;
-        let accessRequestingUsers = []
+        let aux = [];
+        let docs = [];
+        const { per_page, page, order, dir, search } = req.query;
+        let accessRequestingUsers;
+
+        accessRequestingUsers = await AccessRequestingUser.find();
+
         if(search){
-            let aux = await AccessRequestingUser.find();
-            aux.forEach(accessRequestingUser => { 
-                if(aes256.decrypt(accessRequestingUser.salt, accessRequestingUser.name).match(search) ||
-                aes256.decrypt(accessRequestingUser.salt, accessRequestingUser.surname).match(search) ||
-                aes256.decrypt(accessRequestingUser.salt, accessRequestingUser.email).match(search)){
-                    accessRequestingUsers.push(accessRequestingUser)
+            accessRequestingUsers.map(accessRequestingUser => { 
+                let key = accessRequestingUser.salt
+
+                if(aes256.decrypt(key, accessRequestingUser.name).match(search) ||
+                aes256.decrypt(key, accessRequestingUser.surname).match(search) ||
+                aes256.decrypt(key, accessRequestingUser.email).match(search)){
+                    aux.push({
+                        _id: accessRequestingUser._id,
+                        name: aes256.decrypt(key, accessRequestingUser.name),
+                        surname: aes256.decrypt(key, accessRequestingUser.surname),
+                        email: aes256.decrypt(key, accessRequestingUser.email),
+                    })
                 } 
             })
-            const paginateCollection = Paginator(accessRequestingUsers, Number(page), Number(per_page));
-            return res.json(paginateCollection)
         }
-        accessRequestingUsers = await AccessRequestingUser.paginate({},{ page , limit: Number(per_page) });
-        ({docs, ...resp} = accessRequestingUsers);
-        accessRequestingUsers.docs.map(accessRequestingUser => {
-            aux.push({
-                _id: accessRequestingUser._id,
-                name: aes256.decrypt(accessRequestingUser.salt, accessRequestingUser.name),
-                surname: aes256.decrypt(accessRequestingUser.salt, accessRequestingUser.surname),
-                email: aes256.decrypt(accessRequestingUser.salt, accessRequestingUser.email),
+        else {
+            accessRequestingUsers.map(accessRequestingUser => {
+                let key = accessRequestingUser.salt
+
+                aux.push({
+                    _id: accessRequestingUser._id,
+                    name: aes256.decrypt(key, accessRequestingUser.name),
+                    surname: aes256.decrypt(key, accessRequestingUser.surname),
+                    email: aes256.decrypt(key, accessRequestingUser.email),
+                })
             })
-        })
-        resp.docs = aux;
-        return res.json(resp);
+        }
+        
+        order ? sortJsonArray(aux, order, dir) : null;
+        
+        for(let n = per_page*(page-1); n < per_page*page, n < aux.length; n++){
+            docs.push(aux[n])
+        }
+
+        return res.json({docs, total: aux.length, page: page});
     },
 
     async refuse(req, res) {

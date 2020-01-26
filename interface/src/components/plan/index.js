@@ -166,8 +166,8 @@ class PlanEl extends Component {
     switchDayDisplay = (n) => {
         let picker = document.querySelectorAll(".DayPicker");
         if(picker) {
-            for(var i = 0; i< picker.length; i++){ 
-                if(picker[i].parentElement.getAttribute("index") === this.props.index){
+            for(var i = 0; i< picker.length; i++){
+                if(picker[i].parentElement.getAttribute("index") == this.props.index){
                     if(picker[i].style.display === 'none' || picker[i].style.display === "") {
                         picker[i].style.display = 'inline-block'
                     }

@@ -7,7 +7,7 @@ function compute_hsl(base, x, y){
     return convert.rgb.hex(color);  
 }
 
-let baseColor = 25;
+let baseColor = 216.48;
 
 let settings = {
     home_page: 'http://localhost:3000',

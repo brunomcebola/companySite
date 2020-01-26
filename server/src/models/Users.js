@@ -7,54 +7,29 @@ const crypto = require('crypto');
 
 /* ESQUEMA DA INFORMAÇÃO REFERENTE AOS PACIENTES */
 const UsersSchema = new mongoose.Schema({
-    name: {
-        type: String, 
-        required: true
-    },
-    surname: {
-        type: String,
-        required: true
-    },
-    email: {
-        type: String,
-        required: true
-    },
-    permissions: {
-        type: Number,
-        default: 0
-    },
-    basePasswordSalt: {
-        type: String,
-        required: true
-    },
-    basePasswordHash: {
-        type: String,
-        required: true
-    },
-    passwordSalt: {
-        type: String,
-        default: ''
-    },
-    passwordHash: {
-        type: String,
-        default: ''
-    },
-    usernameSalt: {
-        type: String,
-        required: true
-    },
-    usernameHash: {
-        type: String,
-        required: true
-    },
-    dataSalt: {
-        type: String,
-        required: true
-    },
-    hash: {
-        type: String,
-        required: true
-    }
+    name: { type: String, required: true },
+
+    surname: { type: String, required: true },
+
+    email: { type: String,  required: true },
+
+    permissions: { type: Number, default: 0 },
+
+    basePasswordSalt: { type: String, required: true },
+
+    basePasswordHash: { type: String, required: true },
+
+    passwordSalt: { type: String, default: '' },
+
+    passwordHash: { type: String, default: '' },
+
+    usernameSalt: { type: String, required: true },
+
+    usernameHash: { type: String, required: true },
+
+    dataSalt: { type: String, required: true },
+
+    hash: { type: String, required: true },
 }); 
 
 UsersSchema.methods.setBasePassword = function(password) {

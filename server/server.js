@@ -8,6 +8,7 @@ const PORT = process.env.PORT || 3001
 const app = express();
 app.use(express.json());
 app.use(cors({}));
+app.use('/uploads', express.static('uploads'));
 
 //ligação à base de dados
 mongoose.connect(
