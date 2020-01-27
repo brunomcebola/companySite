@@ -125,8 +125,10 @@ export default class NavBar extends Component {
                 el.childNodes[0].childNodes[0].style.color = "#fff";
                 el.childNodes[0].childNodes[0].childNodes[0].style.filter = this.state.img_empty ? "invert(100%)" : null;
                 el.childNodes[1].style.display = 'none';
-                el.childNodes[0].childNodes[0].querySelector('i').classList.remove('rotate_up')
-                el.childNodes[0].childNodes[0].querySelector('i').classList.add('rotate_down')
+                if(el.childNodes[0].childNodes[0].querySelector('i').classList.contains('rotate_up')){
+                    el.childNodes[0].childNodes[0].querySelector('i').classList.remove('rotate_up')
+                    el.childNodes[0].childNodes[0].querySelector('i').classList.add('rotate_down')
+                }
             }
         }.bind(this));
 

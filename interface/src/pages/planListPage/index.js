@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import './styles.scss';
 
 import NavBar from '../../components/navBar';
-import PlanList from '../../components/planList';
+import List from '../../components/list';
 import Footer from '../../components/footer';
 
 export default class PlanListPage extends Component {
@@ -17,7 +17,7 @@ export default class PlanListPage extends Component {
         return(
             <div id="planListPage">
                 <NavBar underline = "3" />
-                <PlanList />
+                <List type = "month"/>
                 <Footer />
             </div>
         );

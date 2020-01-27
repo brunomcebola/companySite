@@ -1,25 +1,9 @@
-#planList {
-    display: flex;
-	justify-content: center;
-    align-items: center;
-    flex-direction: column;
-
-    #new {
-        margin-top: 50px;
-    }
-    
-    #load {
-        margin: 40px 0 70px 0;
-    }
-}
-
 .planListEl {
     width: 50vw;
-    height: 20vh;
-    min-height: 120px;
+    height: 120px;
     min-width: 550px;
     background: #fff;
-    margin-top: 40px;
+    margin-bottom: 25px;
     border-radius: 10px;
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.22), 0 10px 10px rgba(0, 0, 0, 0.22);
     display: flex;

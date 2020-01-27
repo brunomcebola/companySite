@@ -74,10 +74,13 @@ button {
     }
 
     &.level3 {
-        color: $thirdColor;
+        color: $firstColor;
         background: transparent;
         &:active {
-            color: $thirdDarkColor;
+            color: $firstDarkColor;
+        }
+        &:disabled {
+            color: $thirdColor
         }
     }
 }
