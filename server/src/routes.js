@@ -4,6 +4,7 @@ const routes = express.Router();
 /* controladores dos pedidos */
 const AccessRequest = require('./controllers/AccessRequestController')
 const Users = require('./controllers/UsersController')
+const Inventory = require('./controllers/InventoryController')
 
 routes.post('/accessRequest/new', AccessRequest.new);
 routes.get('/accessRequest/paginate', AccessRequest.paginate);
@@ -19,5 +20,9 @@ routes.put('/users/update', Users.update);
 routes.put('/users/uploadImage', Users.uploadImage);
 routes.get('/users/retrieveProfilePic', Users.retrieveProfilePic);
 routes.get('/users/retrieveProfilePics', Users.retrieveProfilePics);
+
+routes.post('/inventory/create', Inventory.create)
+routes.get('/inventory/paginate', Inventory.paginate)
+routes.post('/inventory/new', Inventory.new)
 
 module.exports = routes;

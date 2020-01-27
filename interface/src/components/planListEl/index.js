@@ -72,17 +72,17 @@ export default class PlanListEl extends Component {
 
     render() {
         return(
-            <div className = "planListEl" id = {"aaaa"}>
+            <div className = "planListEl" id = {this.props.id}>
                 <div>
                     <h3 id = {"h3"+this.props.num}>
                         <div id = {"div"+this.props.num}>{this.name(this.props.name)}</div>
-                        <i className = "fa fa-trash-o" onClick = {() => this.props.modal("aaaa")}></i>
+                        <i className = "fa fa-trash-o" onClick = {() => this.props.modal(this.props.id)}></i>
                         <i className = "fa fa-pencil" onClick = {() => this.setEditable("div"+this.props.num)}></i>
                     </h3>
                     <p>Created by: John Doe (Admin)</p>
                     <p>At: {this.date()}</p>
                 </div>
-                <button className = "level1" onClick = {() => this.redirect(this.name(this.props.name))}>View</button>
+                <button className = "level1" onClick = {() => this.redirect(this.props.id)}>View</button>
             </div>
         )
     }

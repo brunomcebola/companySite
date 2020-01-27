@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-
 import _variables from '../../utilities/_variables.scss';
 
 import './styles.scss';
@@ -8,20 +7,8 @@ import './styles.scss';
 var lastClick = null;
 var newClick = null;
 
+
 export default class InventListEl extends Component {
-    date = () => {
-        var today = new Date();
-        var dd = String(today.getDate()).padStart(2, '0');
-        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-        var yyyy = today.getFullYear();
-        var sec = String(today.getSeconds()).padStart(2, '0');
-        var min = String(today.getMinutes()).padStart(2, '0');
-        var hr = String(today.getHours()).padStart(2, '0');
-
-        today = dd + '/' + mm + '/' + yyyy + ' - ' + hr + ':' + min + ':' + sec;
-        return today;
-    }
-
     ordinal_suffix_of = (i) => {
         var j = i % 10,
             k = i % 100;
@@ -69,6 +56,17 @@ export default class InventListEl extends Component {
                 lastClick = newClick;               
             }
         });
+
+        let divs = document.querySelectorAll("div");
+
+        divs.forEach(function(elem) {
+            let id = elem.id
+            if(id.match('div')){ 
+                elem.addEventListener("input", function() {
+                    console.log(elem.innerHTML)
+                });
+            }
+        });
     }
 
     render() {
@@ -80,10 +78,10 @@ export default class InventListEl extends Component {
                         <i className = "fa fa-trash-o" onClick = {() => this.props.modal(this.props.id)}></i>
                         <i className = "fa fa-pencil" onClick = {() => this.setEditable("div"+this.props.num)}></i>
                     </h3>
-                    <p>Created by: John Doe (Admin)</p>
-                    <p>At: {this.date()}</p>
+                    <p><strong>Created by: </strong>{this.props.info}</p>
+                    <p><strong>At: </strong>{this.props.date}</p>
                 </div>
-                <button className = "level1" onClick = {() => this.redirect(this.name(this.props.name))}>View</button>
+                <button className = "level1" onClick = {() => this.redirect(this.props.id)}>View</button>
             </div>
         )
     }

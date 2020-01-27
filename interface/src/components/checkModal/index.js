@@ -2,8 +2,8 @@ import React from 'react';
 
 import './styles.scss';
 
-const CheckModal = ({phrase, check, cancel, button1, button2}) =>
-    <div id = "checkModal" name = "CheckModal">
+const CheckModal = ({phrase, check, cancel, button1, button2, topDist}) =>
+    <div id = "checkModal" style = {{top: topDist}} name = "CheckModal">
         <div id = "check">
             <h4>{phrase}</h4>
             <div id = "buttons">

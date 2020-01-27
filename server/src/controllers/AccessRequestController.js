@@ -4,7 +4,6 @@ const randomstring = require("randomstring");
 const aes256 = require('aes256');
 const sortJsonArray = require('sort-json-array');
 
-
 const AccessRequestingUser = mongoose.model('AccessRequestingUser');
 const User = mongoose.model('User');
 
