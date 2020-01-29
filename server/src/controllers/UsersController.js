@@ -148,11 +148,11 @@ module.exports = {
                 return res.status(500).send("Unable to save to database")
             }
         
-            files.forEach(file => {
+            files.forEach(async file => {
                 const fileDir = path.join('./images/profile_pics', file);
         
                 if (file.match(req.query.id)) {
-                    fs.unlinkSync(fileDir);
+                    await fs.unlink(fileDir, () => {});
                 }
             });
         });
@@ -164,9 +164,9 @@ module.exports = {
             
         up(req, res, function (err) {
             if (err instanceof multer.MulterError) {
-                return res.status(500).send("Unable to save to database")
+                return
             } else if (err) {
-                return res.status(500).send("Unable to save to database")
+                return
             }
 
             let new_img = new ProfilePic;

@@ -20,6 +20,11 @@
                     &:first-of-type{
                         text-align: center;
                     }
+
+                    .material-icons {
+                        position: absolute;
+                        right: -25px;
+                    }
                 }
             }
         }

@@ -22,7 +22,7 @@ export default class InventoryPage extends Component {
         this.state = {
             columns: [
 				{ 
-					title: 'Avatar', 
+					title: 'Image', 
 					field: 'avatar', 
 					headerStyle: {pointerEvents: "none"}, 
 					grouping: false, 
@@ -89,7 +89,7 @@ export default class InventoryPage extends Component {
         reader.readAsDataURL(event.target.files[0]);
         this.setState({
             selectedFile: event.target.files[0],
-            loaded: 0,
+			loaded: 0,
         })  
     }
 
@@ -114,7 +114,17 @@ export default class InventoryPage extends Component {
         var bytes = [].slice.call(new Uint8Array(buffer));
         bytes.forEach((b) => binary += String.fromCharCode(b));
         return window.btoa(binary);
-    };
+	};
+	
+	name = async () => {
+		let res = await api.get(`/inventory/getTableName?tableId=${this.state.id}`); 
+		return res.data[0].name
+	}
+
+	async componentDidMount () {
+		let title = document.querySelector('.MTableToolbar-title-37 .MuiTypography-h6')
+		title.innerHTML = await this.name()
+	}
 
     render() {
         return (
@@ -123,7 +133,7 @@ export default class InventoryPage extends Component {
                 <div id = "MaterilTableContainer">
 					<MuiThemeProvider theme={this.theme}>
 						<MaterialTable
-							title="Users"
+							title='aaa'
 							tableRef={this.tableRef}
 							columns={this.state.columns}
 							style = {this.state.style} 
@@ -139,9 +149,15 @@ export default class InventoryPage extends Component {
 										.catch(() => {})
 										.then(result => {
 											result.docs.map(res => {
-												res.avatar = tools
+												if(res.img){
+													var base64Flag = 'data:image/jpeg;base64,';
+													var imageStr = this.arrayBufferToBase64(res.img.data);
+													res.avatar = base64Flag + imageStr
+												}
+												else{
+													res.avatar = tools
+												}
 											})
-
 											resolve({
 												data: result.docs,
 												page: result.page - 1,
@@ -155,8 +171,8 @@ export default class InventoryPage extends Component {
 							editable={{
 								onRowAdd: newData =>
 									new Promise(async (resolve, reject) => {
-										let url
 
+										let url
 										url = settings.api_link + 'inventory/add'
 										url += '?tableId=' + this.state.id;		
 
@@ -167,7 +183,6 @@ export default class InventoryPage extends Component {
 											.then(result => result.json())
 											.catch(() => {})
 											.then(res => {
-												console.log(res)
 
 												const data = new FormData()
 												data.append('file', this.state.selectedFile)
@@ -180,19 +195,30 @@ export default class InventoryPage extends Component {
 									}),
 
 								onRowUpdate: (newData, oldData) =>
-									new Promise((resolve, reject) => {
-										let url = settings.api_link + 'users/update'
+									new Promise((resolve, reject) => {		
 
-										const data = new FormData()
-        								data.append('file', this.state.selectedFile)
+										let {img, img_name, avatar, ...update} = newData;
+										update.qnt = parseInt(newData.qnt)
+										update.category = parseInt(newData.category)
+
+										let url
+										url = settings.api_link + 'inventory/updateItem'
+										url += '?tableId=' + this.state.id;		
+										
+										fetch(url, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(update)})
+											.then(result => result.json())
+											.catch(() => {})
+											.then(res => {
+												if(this.state.selectedFile) {
+													const data = new FormData()
+													data.append('file', this.state.selectedFile)
+													api.put(`inventory/uploadImage?lineId=${update.id}&tableId=${this.state.id}`, data, {})
+														.then(res => {})
+												}
+											})
 
 										resolve()
-											
-										/*fetch(url, {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(newData)})
-											.then(() => {
-												resolve()
-												this.tableRef.current && this.tableRef.current.onQueryChange()
-											})*/
+										this.tableRef.current && this.tableRef.current.onQueryChange()
 									}),
 
 								onRowDelete: oldData =>

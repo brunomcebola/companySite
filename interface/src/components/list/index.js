@@ -100,6 +100,7 @@ export default class List extends Component {
                     />, 
                     id: ans.data[i].id
                 })
+                this.setState({ el_num: this.state.el_num + 1 })
             }
         }
 
@@ -122,7 +123,7 @@ export default class List extends Component {
         checkModal.style.display = "none";
 
         this.state.elements.splice(this.state.elements.findIndex((data) => {return data.id == el.id}),1)
-
+        this.setState({ el_num: this.state.el_num - 1 })
         this.forceUpdate()
 
         if(this.props.type === "month") {
@@ -131,7 +132,7 @@ export default class List extends Component {
         else if(this.props.type === "invent") {
             await api.delete('/inventory/delete?tableId=' + el.id)
         }
-        
+
     }
 
     cancel = () => {

@@ -14,7 +14,7 @@ var con = mysql.createConnection({
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, `images/inventory/${req.query.tableId}`)
+        cb(null, `./images/inventory/${req.query.tableId}`)
     },
     filename: function (req, file, cb) {
         cb(null, req.query.lineId+'_line-pic'+file.originalname.slice(file.originalname.indexOf('.'), file.originalname.length))
@@ -43,8 +43,9 @@ module.exports = {
         return res.status(200).send('Changes saved to database')
     },
 
-    async updateName(req, res) {
+    async updateTableName(req, res) {
         con.query(`UPDATE inventories SET ? WHERE id = '${req.query.tableId}'`, req.body)
+        return res.status(200).send('Changes saved to database') 
     },
 
     async paginate(req, res) {
@@ -57,6 +58,7 @@ module.exports = {
         con.query(`DELETE FROM inventories WHERE id = '${req.query.tableId}'`);
         con.query(`DROP TABLE ${req.query.tableId}`);
         rimraf(`./images/inventory/${req.query.tableId}`, function () {});
+        return res.status(200).send('Changes saved to database') 
     },
 
     async listing(req, res) {
@@ -81,14 +83,14 @@ module.exports = {
                 return res.status(500).send("Unable to save to database")
             }
         
-            files.forEach(file => {
+            files.forEach(async file => {
                 const fileDir = path.join(`./images/inventory/${req.query.tableId}`, file);
         
                 if (file.slice(0,file.indexOf('.')) == req.query.lineId+'_line-pic') {
-                    fs.unlinkSync(fileDir);
+                    await fs.unlink(fileDir, () => {});
                 }
             });
-        });  
+        });
             
         up(req, res, function (err) {
             if (err instanceof multer.MulterError) {
@@ -103,11 +105,19 @@ module.exports = {
             }
 
             con.query(`UPDATE ${req.query.tableId} SET ? WHERE id = ${req.query.lineId}`, data)
-            
         })   
 
-        
-
         return res.status(200).send("Changes saved to datatabse")
+    },
+
+    async getTableName(req,res) {
+        con.query(`SELECT name FROM inventories WHERE id = '${req.query.tableId}'`, function (err, result, fields) {
+            res.send(result);
+        });
+    },
+
+    async updateItem(req, res) {
+        con.query(`UPDATE ${req.query.tableId} SET ? WHERE id = ${req.body.id}`, req.body)
+        return res.status(200).send('Changes saved to database') 
     }
 }

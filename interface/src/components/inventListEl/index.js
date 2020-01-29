@@ -41,7 +41,9 @@ export default class InventListEl extends Component {
         newClick = el.parentElement.getAttribute("id");
     }
 
-    redirect = (id) => {
+    redirect = async (num, id) => {
+        let div = document.querySelector("#div"+num);
+        await api.post(`/inventory/updateTableName?tableId=${id}`, {name: div.innerHTML})
         window.location.href = window.location.href + '/' + id;
     }
 
@@ -58,14 +60,23 @@ export default class InventListEl extends Component {
             }
         });
 
-        let divs = document.querySelectorAll("div");
+        let divs = document.querySelectorAll("div");        
 
         divs.forEach(function(elem) {
             let id = elem.id
+
+            let typingTimer;                //timer identifier
+            let doneTypingInterval = 1000;  //time in ms: 2 seconds
+
             if(id.match('div')){ 
-                elem.addEventListener("input", async function() {
+                elem.addEventListener('keyup', async function() {
                     let id = elem.parentElement.parentElement.parentElement.id
-                    await api.post(`/inventory/updateName?tableId=${id}`, {name: elem.innerHTML})
+                    clearTimeout(typingTimer);
+                    typingTimer = setTimeout(async () => await api.post(`/inventory/updateTableName?tableId=${id}`, {name: elem.innerHTML}), doneTypingInterval);
+                });
+
+                elem.addEventListener('keydown', function () {
+                    clearTimeout(typingTimer);
                 });
             }
         });
@@ -83,7 +94,7 @@ export default class InventListEl extends Component {
                     <p><strong>Created by: </strong>{this.props.info}</p>
                     <p><strong>At: </strong>{this.props.date}</p>
                 </div>
-                <button className = "level1" onClick = {() => this.redirect(this.props.id)}>View</button>
+                <button className = "level1" onClick = {() => this.redirect(this.props.num, this.props.id)}>View</button>
             </div>
         )
     }
