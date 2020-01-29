@@ -85,7 +85,6 @@ export default class UsersAccessRequestPage extends Component {
 								
 								/* TODO: a pesquisa não está a funcionar */
 								new Promise((resolve, reject) => {
-									console.log(query)
 									let url = 'http://localhost:3001/accessRequest/'
 									url += 'paginate?per_page=' + query.pageSize 
 									url += '&page=' + (query.page + 1) 
@@ -95,7 +94,9 @@ export default class UsersAccessRequestPage extends Component {
 										
 									fetch(url)
 										.then(response => response.json())
+										.catch(() => {})
 										.then(result => {
+											console.log(result)
 											resolve({
 												data: result.docs,
 												page: result.page - 1,

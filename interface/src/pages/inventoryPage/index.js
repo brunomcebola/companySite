@@ -5,7 +5,7 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import api from '../../services/api'
 import settings from '../../config'
 
-import avatar from '../../images/other.png'
+import tools from '../../images/tools.png'
 
 import './styles.scss';
 import _variables from '../../utilities/_variables.scss';
@@ -13,7 +13,7 @@ import _variables from '../../utilities/_variables.scss';
 import NavBar from '../../components/navBar';
 import Footer from '../../components/footer';
 
-export default class UsersManagementPage extends Component {
+export default class InventoryPage extends Component {
 	constructor(props) {
 		super(props);
 
@@ -24,44 +24,42 @@ export default class UsersManagementPage extends Component {
 				{ 
 					title: 'Avatar', 
 					field: 'avatar', 
-					editable: 'never', 
 					headerStyle: {pointerEvents: "none"}, 
 					grouping: false, 
 					render: rowData => <img src={rowData.avatar} style={{width: 50, height: 50, borderRadius: '50%'}}/>,
+					editComponent: props => (
+						<div className = "item-pic">
+                            <label for="file-input">
+                                <i id = "cam" className="fa fa-camera" aria-hidden="true"></i>
+                                <img id = "pic" alt = "img" src={props.value || ''}></img>
+                            </label>
+                            <input id="file-input" type="file" onChange = {event => this.preview(event)}/>
+							<span className="tooltiptext">Select an image</span>
+                        </div>
+					)
 				},
 				{ 
 					title: 'Name', 
-					field: 'name', 
-					editable: 'never' 
+					field: 'name' 
 				},
 				{ 
-					title: 'Surname', 
-					field: 'surname', 
-					editable: 'never' 
+					title: 'Quantity', 
+					field: 'qnt', 
+					type: 'numeric' 
 				},
 				{ 
-					title: 'E-mail', 
-					field: 'email', 
-					editable: 'never'
-				},
-				{ 
-					title: 'Password', 
-					field: 'password', 
-					grouping: false, 
-					headerStyle: {pointerEvents: "none"}, 
-					render: rowData => <input type = "text" value = '•••••••' style = {{border: 0, width: 156, backgroundColor: 'rgba(253, 253, 253, 0)'}} disabled/>
-				},
-				{ 
-					title: 'Permissions', 
-					field: 'permissions',
-					lookup: { 0: 'Viewer', 1: 'Editor', 2: 'Administrator' },
+					title: 'Category', 
+					field: 'category',
+					lookup: { 0: 'Office material', 1: 'Technologies', 2: 'Field material' },
 				},
             ],
             style: {
 				  width: '80%',
-				  marginTop: '2%'
+				  marginTop: '2%',
 			},
-			id: null,
+			img: '',
+			selectedFile: null,
+			id: decodeURIComponent(window.location.href.substring(window.location.href.lastIndexOf('/') + 1)),
 		}
 
 		this.theme = createMuiTheme({
@@ -75,6 +73,25 @@ export default class UsersManagementPage extends Component {
 			}
 		});
 	}
+
+	preview = (event) => {
+        var reader = new FileReader();
+        reader.onload = function() {
+            var output = document.getElementById('pic');
+            var placeholder = document.getElementById('cam');
+            var container = document.querySelector(".item-pic");
+            placeholder.style.display = "none";
+            output.style.display = "block";
+            container.style.paddingTop = "6%";
+            container.style.paddingBottom = "6%";
+            output.src = reader.result;
+        }
+        reader.readAsDataURL(event.target.files[0]);
+        this.setState({
+            selectedFile: event.target.files[0],
+            loaded: 0,
+        })  
+    }
 
 	refuse = async () => {
 		await api.delete(`/accessRequest/refuse?id=${this.state.id}`);
@@ -101,8 +118,8 @@ export default class UsersManagementPage extends Component {
 
     render() {
         return (
-            <div id = "usersManagementPage">
-                <NavBar underline = "8"/>
+            <div id = "inventoryPage">
+                <NavBar underline = "4" enable = "1"/>
                 <div id = "MaterilTableContainer">
 					<MuiThemeProvider theme={this.theme}>
 						<MaterialTable
@@ -114,64 +131,68 @@ export default class UsersManagementPage extends Component {
 								new Promise((resolve, reject) => {
 									let url
 
-									let aux = []
-
-									url = settings.api_link + 'users/retrieveProfilePics'
-									url += '?userId=' + localStorage.getItem('id');
-
+									url = settings.api_link + 'inventory/listing'
+									url += '?tableId=' + this.state.id;
+		
 									fetch(url)
 										.then(response => response.json())
 										.catch(() => {})
-										.then(resps => {
-											
-											if(resps) {
-												resps.map(resp => {
-													var base64Flag = 'data:image/jpeg;base64,';
-													var imageStr = this.arrayBufferToBase64(resp.img.data.data);
-													aux.push({avatar: base64Flag + imageStr, userId: resp.userId})
-												})
-											}
+										.then(result => {
+											result.docs.map(res => {
+												res.avatar = tools
+											})
 
-											url = settings.api_link + 'users/paginate'
-											url += '?per_page=' + query.pageSize 
-											url += '&page=' + (query.page + 1) 
-											url += '&search=' + query.search
-											url += '&order=' + (query.orderBy ? query.orderBy.field : '')
-											url += '&dir=' + (query.orderDirection === 'asc' ? 'asc' : query.orderDirection === 'desc' ? 'des' : null)
-											url += '&id=' + localStorage.getItem('id');
-												
-											fetch(url)
-												.then(response => response.json())
-												.catch(() => {})
-												.then(result => {
-													result.docs.map(res => {
-														for(let i = 0; i< aux.length; i++) {
-															console.log(aux[i].userId)
-															if(aux[i].userId === res._id) {res.avatar = aux[i].avatar;return}
-														}
-														res.avatar = avatar
-													})
-
-													resolve({
-														data: result.docs,
-														page: result.page - 1,
-														totalCount: result.total,
-													})
-												})
-
+											resolve({
+												data: result.docs,
+												page: result.page - 1,
+												totalCount: result.total,
+											})
 										})
+
 								})
+								
 							}      
 							editable={{
+								onRowAdd: newData =>
+									new Promise(async (resolve, reject) => {
+										let url
+
+										url = settings.api_link + 'inventory/add'
+										url += '?tableId=' + this.state.id;		
+
+										newData.qnt = parseInt(newData.qnt)
+										newData.category = parseInt(newData.category)
+
+										fetch(url, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(newData)})
+											.then(result => result.json())
+											.catch(() => {})
+											.then(res => {
+												console.log(res)
+
+												const data = new FormData()
+												data.append('file', this.state.selectedFile)
+												api.put(`inventory/uploadImage?lineId=${res.insertId}&tableId=${this.state.id}`, data, {})
+													.then(res => {})
+	
+											})
+										resolve()
+										this.tableRef.current && this.tableRef.current.onQueryChange()
+									}),
+
 								onRowUpdate: (newData, oldData) =>
 									new Promise((resolve, reject) => {
 										let url = settings.api_link + 'users/update'
+
+										const data = new FormData()
+        								data.append('file', this.state.selectedFile)
+
+										resolve()
 											
-										fetch(url, {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(newData)})
+										/*fetch(url, {method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(newData)})
 											.then(() => {
 												resolve()
 												this.tableRef.current && this.tableRef.current.onQueryChange()
-											})
+											})*/
 									}),
 
 								onRowDelete: oldData =>
@@ -195,6 +216,7 @@ export default class UsersManagementPage extends Component {
 								headerStyle: {
 									fontWeight: 'bold',
 									fontSize: '16px',
+									arrowPosition: 'after'
 								},
 								grouping: true,
 							}}

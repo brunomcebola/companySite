@@ -8,11 +8,12 @@ import { CookiesProvider } from 'react-cookie';
 import DefaultPage from './pages/defaultPage';
 import LoginPage from './pages/loginPage';
 import ProfilePage from './pages/profilePage';
-import PlanListPage from './pages/planListPage';
-import PlanPage from './pages/planPage';
+import MonthlyPlanListPage from './pages/monthlyPlanListPage';
+import MonthlyPlanPage from './pages/monthlyPlanPage';
 import UsersAccessRequestPage from './pages/usersAccessRequestPage';
 import UsersManagementPage from './pages/usersManagementPage';
 import InventoryListPage from './pages/inventoryListPage'
+import InventoryPage from './pages/inventoryPage'
 
 const Routes = () => (
     <CookiesProvider>
@@ -21,11 +22,12 @@ const Routes = () => (
                 {/* defines which page to be rendered */}
                 <Route exact path='/' component={LoginPage} />   {/* login page */}
                 <Route exact path='/profile' component={ProfilePage} />   {/* user profile */}
-                <Route exact path='/monthlyPlans' component={PlanListPage} />   {/* monthly plan */}
-                <Route exact path='/monthlyPlans/:plan' component={PlanPage} />   {/* monthly plan */}
+                <Route exact path='/monthlyPlans' component={MonthlyPlanListPage} />   {/* monthly plan */}
+                <Route exact path='/monthlyPlans/:plan' component={MonthlyPlanPage} />   {/* monthly plan */}
                 <Route exact path='/usersAccessRequest' component={UsersAccessRequestPage} />   {/* monthly plan */}
                 <Route exact path='/usersManagement' component={UsersManagementPage} />   {/* monthly plan */}
                 <Route exact path='/inventory' component={InventoryListPage} />   {/* monthly plan */}
+                <Route exact path='/inventory/:invent' component={InventoryPage} />   {/* monthly plan */}
                 <Route component={DefaultPage} />   {/* default page redirection */}
             </Switch>
         </BrowserRouter>

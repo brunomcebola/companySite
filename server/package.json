@@ -31,6 +31,7 @@
     "path": "^0.12.7",
     "randomstring": "^1.1.5",
     "require-dir": "^1.2.0",
+    "rimraf": "^3.0.1",
     "sort-array-objects": "^3.0.0",
     "sort-json-array": "^0.1.7",
     "sort-objects-array": "^1.7.1"

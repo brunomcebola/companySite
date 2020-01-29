@@ -5,17 +5,18 @@
 
 #usersManagementPage {
     margin-bottom: 4%;
-}
 
-#MaterilTableContainer {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    .MuiTableRow-root{
-        &[mode=delete] {
-            background-color: $firstLightColor;
+    #MaterilTableContainer {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    
+        .MuiTableRow-root{
+            &[mode=delete] {
+                background-color: $firstLightColor;
+            }
         }
     }
 }
+

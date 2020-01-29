@@ -22,7 +22,11 @@ routes.get('/users/retrieveProfilePic', Users.retrieveProfilePic);
 routes.get('/users/retrieveProfilePics', Users.retrieveProfilePics);
 
 routes.post('/inventory/create', Inventory.create)
+routes.post('/inventory/updateName', Inventory.updateName)
 routes.get('/inventory/paginate', Inventory.paginate)
-routes.post('/inventory/new', Inventory.new)
+routes.delete('/inventory/delete', Inventory.delete)
+routes.get('/inventory/listing', Inventory.listing)
+routes.post('/inventory/add', Inventory.add);
+routes.put('/inventory/uploadImage', Inventory.uploadImage);
 
 module.exports = routes;

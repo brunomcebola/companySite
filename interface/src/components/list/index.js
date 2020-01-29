@@ -67,12 +67,12 @@ export default class List extends Component {
             this.setState({ el_num: this.state.el_num + 1 })
         }
         else if(this.props.type === "invent") {
-            el = <InventListEl num = {this.state.el_num + 1} modal = {this.showModal} id = {id} date = {date} info = {info}/>
+            el = <InventListEl num = {this.state.el_num + 1} modal = {this.showModal} id = {id} date = {date} info = {info} creator_id = {localStorage.getItem('id')}/>
             this.state.elements.unshift({el, id})
             this.setState({ el_num: this.state.el_num + 1 })
 
             let ele = document.querySelector('#div'+ this.state.el_num)
-            let data = {id, name: ele.innerHTML, creator: info, created_at: date}
+            let data = {id, name: ele.innerHTML, creator: info, creator_id: localStorage.getItem('id'), created_at: date}
 
             await api.post('/inventory/create', data)
         }
@@ -81,25 +81,29 @@ export default class List extends Component {
     add = async () => {
         //not working. nets to connect to database
 
-        /*if(this.props.type === "month") {
-            this.state.elements.push(<PlanListEl name = "November 2019 Monthly plan" modal = {this.showModal}/>)
+        if(this.props.type === "month") {
+            //this.state.elements.push(<PlanListEl name = "November 2019 Monthly plan" modal = {this.showModal}/>)
         }
         else if(this.props.type === "invent") {
-            this.state.elements.push(<InventListEl num = {this.state.el_num + 1} modal = {this.showModal}/>)
-        }*/
+            let ans = await api.get('/inventory/paginate')
 
-        //this.setState({ el_num: this.state.el_num + 1 })
-
-        let ans = await api.get('/inventory/paginate')
-
-        for(let i = 0; i< ans.data.length; i++) {
-            this.state.elements.unshift({el: <InventListEl name = {ans.data[i].name} num = {this.state.el_num + 1} modal = {this.showModal} id = {ans.data[i].id} date = {ans.data[i].created_at} info = {ans.data[i].creator}/>, id: ans.data[i].id})
-            this.setState({ el_num: this.state.el_num + 1 })
+            for(let i = (ans.data.length - 1); i >= 0 ; i--) {
+                this.state.elements.unshift({el: 
+                    <InventListEl 
+                        name = {ans.data[i].name} 
+                        num = {this.state.el_num + 1} 
+                        modal = {this.showModal} 
+                        id = {ans.data[i].id} 
+                        date = {ans.data[i].created_at} 
+                        info = {ans.data[i].creator}
+                        creator_id = {ans.data[i].creator_id}
+                    />, 
+                    id: ans.data[i].id
+                })
+            }
         }
 
         this.forceUpdate()
-
-        console.log(this.state.elements)
     }
 
     showModal = (id) => {
@@ -109,7 +113,7 @@ export default class List extends Component {
         this.setState({id});
     }
 
-    del = () => {
+    del = async () => {
         var el = document.getElementById(this.state.id)
 
         if(!el) return
@@ -118,10 +122,16 @@ export default class List extends Component {
         checkModal.style.display = "none";
 
         this.state.elements.splice(this.state.elements.findIndex((data) => {return data.id == el.id}),1)
-        this.state.el_num = this.state.el_num - 1
 
         this.forceUpdate()
 
+        if(this.props.type === "month") {
+            //TODO
+        }
+        else if(this.props.type === "invent") {
+            await api.delete('/inventory/delete?tableId=' + el.id)
+        }
+        
     }
 
     cancel = () => {
@@ -129,8 +139,17 @@ export default class List extends Component {
         checkModal.style.display = "none";
     }
 
+    permissions = async () => {
+        let id = localStorage.getItem('id');
+        let permissions = await api.get(`/users/permissions?id=${id}`);
+        if(!permissions.data) {
+            document.querySelector('#new').disabled = true
+        }
+    }
+
     componentDidMount() {
         this.add()
+        this.permissions()
     }
 
     render(){

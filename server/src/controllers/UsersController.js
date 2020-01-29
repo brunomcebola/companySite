@@ -11,25 +11,25 @@ const ProfilePic = mongoose.model('ProfilePic');
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'images')
+        cb(null, 'images/profile_pics')
     },
     filename: function (req, file, cb) {
         cb(null, req.query.id+'_profile-pic'+file.originalname.slice(file.originalname.indexOf('.'), file.originalname.length))
     }
 })
 
-var up = multer({ storage: storage, limits: { fileSize: 512*512 } }).single('file') //max 2.5MB
+var up = multer({ storage: storage, limits: { fileSize: 1024*512 } }).single('file') //max 0.5MB
 
 
 module.exports = {
     //return dento de foreach nao sai
     async login(req, res) {
         let aux = await User.find();
-        aux.forEach(user => { 
-            if(user.validatePassword(req.body.password) && user.validateUsername(req.body.username)){
-                return res.status(200).send(user._id)
+        for(let i = 0; i < aux.length; i++) {
+            if(aux[i].validatePassword(req.body.password) && aux[i].validateUsername(req.body.username)){
+                return res.status(200).send(aux[i]._id)
             }
-        })
+        }
         return res.status(401).send("Access not allowed")
     },
 
@@ -143,13 +143,13 @@ module.exports = {
     },
 
     async uploadImage(req,res) {
-        fs.readdir('./images', (err, files) => {
+        fs.readdir('./images/profile_pics', (err, files) => {
             if (err) {
                 return res.status(500).send("Unable to save to database")
             }
         
             files.forEach(file => {
-                const fileDir = path.join('./images', file);
+                const fileDir = path.join('./images/profile_pics', file);
         
                 if (file.match(req.query.id)) {
                     fs.unlinkSync(fileDir);

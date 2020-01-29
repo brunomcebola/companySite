@@ -60,6 +60,10 @@ button {
         &:active {
             @include linear-gradient-background(left, $firstDarkColor, $secondDarkColor);
         }
+        &:disabled {
+            @include linear-gradient-background(left, grey, darkgrey);
+            opacity: 0.5;
+        }
     }
 
     &.level2 {

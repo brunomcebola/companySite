@@ -12,10 +12,10 @@ import NavBar from '../../components/navBar';
 import List from '../../components/list';
 import Footer from '../../components/footer';
 
-export default class PlanListPage extends Component {
+export default class MonthlyPlanListPage extends Component {
     render() {
         return(
-            <div id="planListPage">
+            <div id="monthlyPlanListPage">
                 <NavBar underline = "3" />
                 <List type = "month"/>
                 <Footer />

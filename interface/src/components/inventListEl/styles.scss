@@ -43,6 +43,19 @@
                 }
             }
 
+            &.disabled {
+                color: grey;
+                cursor: default;
+
+                &:hover {
+                    opacity: 1
+                }
+
+                &:active {
+                    color: grey;
+                }
+            }
+
             &:hover {
                 opacity: 0.7
             }

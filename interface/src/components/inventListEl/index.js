@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import _variables from '../../utilities/_variables.scss';
 
 import './styles.scss';
+import api from '../../services/api'
 
 var lastClick = null;
 var newClick = null;
@@ -62,8 +63,9 @@ export default class InventListEl extends Component {
         divs.forEach(function(elem) {
             let id = elem.id
             if(id.match('div')){ 
-                elem.addEventListener("input", function() {
-                    console.log(elem.innerHTML)
+                elem.addEventListener("input", async function() {
+                    let id = elem.parentElement.parentElement.parentElement.id
+                    await api.post(`/inventory/updateName?tableId=${id}`, {name: elem.innerHTML})
                 });
             }
         });
@@ -75,8 +77,8 @@ export default class InventListEl extends Component {
                 <div>
                     <h3 id = {"h3"+this.props.num}>
                         <div id = {"div"+this.props.num}>{this.name(this.props.name)}</div>
-                        <i className = "fa fa-trash-o" onClick = {() => this.props.modal(this.props.id)}></i>
-                        <i className = "fa fa-pencil" onClick = {() => this.setEditable("div"+this.props.num)}></i>
+                        <i className = {`fa fa-trash-o ${this.props.creator_id !== localStorage.getItem('id') ? 'disabled' : ''}`} onClick = {this.props.creator_id === localStorage.getItem('id') ? (() => this.props.modal(this.props.id)) : null}></i>
+                        <i className = {`fa fa-pencil ${this.props.creator_id !== localStorage.getItem('id') ? 'disabled' : ''}`} onClick = {this.props.creator_id === localStorage.getItem('id') ? () => this.setEditable("div"+this.props.num) : null}></i>
                     </h3>
                     <p><strong>Created by: </strong>{this.props.info}</p>
                     <p><strong>At: </strong>{this.props.date}</p>

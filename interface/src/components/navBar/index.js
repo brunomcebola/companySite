@@ -119,8 +119,8 @@ export default class NavBar extends Component {
         window.addEventListener("click", function(l){
             let el = document.querySelector('.menu.right .dropdown')
         
-            if(el && l.target.getAttribute('id') !== 'a-av' && l.target.getAttribute('id') !== 'img-av' && l.target && l.target.parentElement &&
-               l.target.getAttribute('id') !== 'i-av' && l.target.parentElement.getAttribute('id') !== 'dc-av'){
+            if(el && l.target && l.target.id !== 'a-av' && l.target.id !== 'img-av' && l.target.id !== 'img-av empty' &&
+               l.target.id !== 'i-av' && l.target.parentElement && l.target.parentElement.id !== 'dc-av'){
                 el.childNodes[0].childNodes[0].style.backgroundColor = "transparent";
                 el.childNodes[0].childNodes[0].style.color = "#fff";
                 el.childNodes[0].childNodes[0].childNodes[0].style.filter = this.state.img_empty ? "invert(100%)" : null;
@@ -184,7 +184,11 @@ export default class NavBar extends Component {
                     </ul>
                     <ul className="menu right">
                         <div className="dropdown">
-                            <li className="dropbtn"><a className="hover" onClick = {() => this.drop()} id = 'a-av'><img src={this.state.img ? this.state.img : avatar} id = {`img-av${this.state.img_empty ? ' empty': ''}`}/> <i className="fa fa-angle-down" id = 'i-av'></i></a></li>
+                            <li className="dropbtn">
+                                <a className="hover" onClick = {() => this.drop()} id = 'a-av'>
+                                    <img className = {this.state.img_empty ? 'empty': ''} src={this.state.img ? this.state.img : avatar} id = {`img-av${this.state.img_empty ? ' empty': ''}`}/> <i className="fa fa-angle-down" id = 'i-av'></i>
+                                </a>
+                            </li>
                             <div className="dropdown-content" id = 'dc-av'>
                                 <p>Signed in as</p>
                                 <p><strong id = "name"></strong></p>

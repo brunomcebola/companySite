@@ -1,10 +1,11 @@
 #usersAccessRequestPage {
     margin-bottom: 4%;
+
+    #MaterilTableContainer {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
 }
 
-#MaterilTableContainer {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
