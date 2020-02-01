@@ -37,8 +37,7 @@ function getDate() {
 async function getUserInfo() {
     let id = localStorage.getItem('id');
     let name = await api.get(`/users/name?id=${id}`);
-    let permissions = await api.get(`/users/permissions?id=${id}`);
-    return name.data + ' (' + (permissions.data == 1 ? 'Editor' : 'Administrator') + ')'
+    return name.data
 }
 
 export default class List extends Component {

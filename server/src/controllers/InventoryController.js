@@ -2,7 +2,8 @@ const mysql = require('mysql')
 const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
-var rimraf = require("rimraf");
+const rimraf = require("rimraf");
+const sortJsonArray = require('sort-json-array');
 
 var con = mysql.createConnection({
     host: "remotemysql.com",
@@ -11,13 +12,12 @@ var con = mysql.createConnection({
     database: "VY6ybliafL"
 });
 
-
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, `./images/inventory/${req.query.tableId}`)
     },
     filename: function (req, file, cb) {
-        cb(null, req.query.lineId+'_line-pic'+file.originalname.slice(file.originalname.indexOf('.'), file.originalname.length))
+        cb(null, req.query.lineId+'_line-pic'+file.originalname.slice(file.originalname.lastIndexOf('.'), file.originalname.length))
     }
 })
 
@@ -34,11 +34,16 @@ module.exports = {
                 img_name varchar(45) collate latin1_general_ci,
                 name varchar(255) NOT NULL,
                 qnt INT,
-                category INT
+                category INT,
+                location INT
             );
         `        
           
         con.query(sql);
+
+        if (!fs.existsSync(`./images/inventory/${req.body.id}`)){
+            fs.mkdirSync(`./images/inventory/${req.body.id}`);
+        }
 
         return res.status(200).send('Changes saved to database')
     },
@@ -62,9 +67,40 @@ module.exports = {
     },
 
     async listing(req, res) {
-        con.query(`SELECT * FROM ${req.query.tableId}`, function (err, result, fields) {
-            res.send({docs: result, total: result.length, page: '1'});
-        });
+        const { per_page, page, tableId, order, dir, search} = req.query;
+
+        if(search) {
+            con.query(`SELECT * FROM ${tableId} WHERE name REGEXP '${search}' OR qnt REGEXP '${search}' ${order?'ORDER BY '+order+' '+dir.toUpperCase():''}`, function (err, result, fields) {
+                if(result){ 
+                    let aux = []
+                    
+                    for(let n = per_page*(page-1); n < per_page*page && n < result.length; n++){
+                        aux.push(result[n])
+                    }
+                    
+                    res.send({docs: aux, total: result.length, page: page})
+                }
+                else{
+                    res.send(null)
+                }
+            });
+        }
+        else {
+            con.query(`SELECT * FROM ${tableId} ${order?'ORDER BY '+order+' '+dir.toUpperCase():''}`, function (err, result, fields) {
+                if(result){ 
+                    let aux = []
+                    
+                    for(let n = per_page*(page-1); n < per_page*page && n < result.length; n++){
+                        aux.push(result[n])
+                    }
+                    
+                    res.send({docs: aux, total: result.length, page: page})
+                }
+                else{
+                    res.send(null)
+                }
+            });
+        }        
     },
 
     async add(req, res) {
@@ -74,19 +110,15 @@ module.exports = {
     },
 
     async uploadImage(req,res) {
-        if (!fs.existsSync(`./images/inventory/${req.query.tableId}`)){
-            fs.mkdirSync(`./images/inventory/${req.query.tableId}`);
-        }
-
         fs.readdir(`./images/inventory/${req.query.tableId}`, (err, files) => {
             if (err) {
-                return res.status(500).send("Unable to save to database")
+                return
             }
         
             files.forEach(async file => {
                 const fileDir = path.join(`./images/inventory/${req.query.tableId}`, file);
         
-                if (file.slice(0,file.indexOf('.')) == req.query.lineId+'_line-pic') {
+                if (file.slice(0,file.lastIndexOf('.')) == req.query.lineId+'_line-pic') {
                     await fs.unlink(fileDir, () => {});
                 }
             });
@@ -119,5 +151,23 @@ module.exports = {
     async updateItem(req, res) {
         con.query(`UPDATE ${req.query.tableId} SET ? WHERE id = ${req.body.id}`, req.body)
         return res.status(200).send('Changes saved to database') 
+    },
+
+    async deleteItem(req, res) {
+        con.query(`DELETE FROM ${req.query.tableId} WHERE id = '${req.query.lineId}'`);
+        fs.readdir(`./images/inventory/${req.query.tableId}`, (err, files) => {
+            if (err) {
+                return
+            }
+        
+            files.forEach(async file => {
+                const fileDir = path.join(`./images/inventory/${req.query.tableId}`, file);
+        
+                if (file.slice(0,file.indexOf('.')) == req.query.lineId+'_line-pic') {
+                    await fs.unlink(fileDir, () => {});
+                }
+            });
+        });
+        return res.status(200).send("changes saved to database")
     }
 }

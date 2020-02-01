@@ -95,7 +95,7 @@ module.exports = {
 
         order ? sortJsonArray(aux, order, dir) : null;
         
-        for(let n = per_page*(page-1); n < per_page*page, n < aux.length; n++){
+        for(let n = per_page*(page-1); n < per_page*page && n < aux.length; n++){
             docs.push(aux[n])
         }
 
@@ -107,8 +107,28 @@ module.exports = {
 
     async exclude(req, res) {
         await User.findOneAndDelete({'_id' : req.query.id })
-            .then(() => {
-                return res.status(200).send("Changes saved to data base")
+            .then(async () => {
+                await ProfilePic.findOneAndDelete({'userId' : req.query.id })
+                    .then(() => {
+                        fs.readdir('./images/profile_pics', (err, files) => {
+                            if (err) {
+                                return res.status(500).send("Unable to save to database")
+                            }
+                        
+                            files.forEach(async file => {
+                                const fileDir = path.join('./images/profile_pics', file);
+                        
+                                if (file.match(req.query.id)) {
+                                    await fs.unlink(fileDir, () => {});
+                                }
+                            });
+                        });
+                        return res.status(200).send("Changes saved to data base")
+                    })
+                    .catch(() => {
+                        return res.status(500).send("Unable to save to database")
+                    })
+                
             })
             .catch(() => {
                 return res.status(500).send("Unable to save to database")

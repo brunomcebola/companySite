@@ -50,7 +50,12 @@ export default class InventoryPage extends Component {
 				{ 
 					title: 'Category', 
 					field: 'category',
-					lookup: { 0: 'Office material', 1: 'Technologies', 2: 'Field material' },
+					lookup: { 0: 'Wiring', 1: 'Light', 2: 'Sound', 3: 'Motion', 4: 'Control' },
+				},
+				{ 
+					title: 'Location', 
+					field: 'location',
+					lookup: { 0: 'Green box', 1: 'Black box', 2: 'Red Box', 3: 'White box', 4: 'Mini box', 5: 'Blue ' },
 				},
             ],
             style: {
@@ -118,7 +123,7 @@ export default class InventoryPage extends Component {
 	
 	name = async () => {
 		let res = await api.get(`/inventory/getTableName?tableId=${this.state.id}`); 
-		return res.data[0].name
+		return res.data ? res.data[0].name : 'inventory'
 	}
 
 	async componentDidMount () {
@@ -133,7 +138,7 @@ export default class InventoryPage extends Component {
                 <div id = "MaterilTableContainer">
 					<MuiThemeProvider theme={this.theme}>
 						<MaterialTable
-							title='aaa'
+							title="Inventory"
 							tableRef={this.tableRef}
 							columns={this.state.columns}
 							style = {this.state.style} 
@@ -143,25 +148,37 @@ export default class InventoryPage extends Component {
 
 									url = settings.api_link + 'inventory/listing'
 									url += '?tableId=' + this.state.id;
+									url += '&per_page='+ query.pageSize 
+									url += '&page=' + (query.page + 1)
+									url += '&order=' + (query.orderBy ? query.orderBy.field : '')
+									url += '&dir=' + query.orderDirection
+									url += '&search=' + query.search
 		
 									fetch(url)
 										.then(response => response.json())
 										.catch(() => {})
 										.then(result => {
-											result.docs.map(res => {
-												if(res.img){
-													var base64Flag = 'data:image/jpeg;base64,';
-													var imageStr = this.arrayBufferToBase64(res.img.data);
-													res.avatar = base64Flag + imageStr
-												}
-												else{
-													res.avatar = tools
-												}
-											})
-											resolve({
-												data: result.docs,
-												page: result.page - 1,
-												totalCount: result.total,
+											if(result) {
+												result.docs.map(res => {
+													if(res.img){
+														var base64Flag = 'data:image/jpeg;base64,';
+														var imageStr = this.arrayBufferToBase64(res.img.data);
+														res.avatar = base64Flag + imageStr
+													}
+													else{
+														res.avatar = tools
+													}
+												})
+												resolve({
+													data: result.docs,
+													page: result.page - 1,
+													totalCount: result.total,
+												})
+											}
+											else resolve({
+												data: [],
+												page: 0,
+												totalCount: 0,
 											})
 										})
 
@@ -183,12 +200,12 @@ export default class InventoryPage extends Component {
 											.then(result => result.json())
 											.catch(() => {})
 											.then(res => {
-
-												const data = new FormData()
-												data.append('file', this.state.selectedFile)
-												api.put(`inventory/uploadImage?lineId=${res.insertId}&tableId=${this.state.id}`, data, {})
-													.then(res => {})
-	
+												if(this.state.selectedFile && res) {
+													const data = new FormData()
+													data.append('file', this.state.selectedFile)
+													api.put(`inventory/uploadImage?lineId=${res.insertId}&tableId=${this.state.id}`, data, {})
+														.then(res => {})
+												}
 											})
 										resolve()
 										this.tableRef.current && this.tableRef.current.onQueryChange()
@@ -223,7 +240,7 @@ export default class InventoryPage extends Component {
 
 								onRowDelete: oldData =>
 									new Promise((resolve, reject) => {
-										fetch(`${settings.api_link}users/exclude?id=${oldData._id}`, {method: 'DELETE'})
+										fetch(`${settings.api_link}inventory/deleteItem?tableId=${this.state.id}&lineId=${oldData.id}`, {method: 'DELETE'})
 											.then(resolve())
 									}),
 							}}
@@ -245,10 +262,11 @@ export default class InventoryPage extends Component {
 									arrowPosition: 'after'
 								},
 								grouping: true,
+								exportButton: true
 							}}
 							localization={{
-								body: {editRow: { deleteText: 'Are you sure you want to exclude this user?' }},
-								grouping: { placeholder: "Drag headers here to group the users..."}
+								body: {editRow: { deleteText: 'Are you sure you want to delete this item?' }},
+								grouping: { placeholder: "Drag headers here to group the items..."}
 							}}
 						/>
 					</MuiThemeProvider>
