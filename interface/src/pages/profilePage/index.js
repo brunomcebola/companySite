@@ -21,6 +21,8 @@ export default class ProfilePage extends Component {
           this.state = {
             selectedFile: null,
             img: '',
+            usr: decodeURIComponent(window.location.href.substring(window.location.href.lastIndexOf('/') + 1)),
+            name: ''
           }
     }
 
@@ -58,23 +60,30 @@ export default class ProfilePage extends Component {
             loaded: 0,
         })  
     }
+
+    name = async () => {
+        let res = await api.get(`/users/name?id=${this.state.usr === 'profile' ? localStorage.getItem('id'): this.state.usr}`);
+        this.setState({name: res.data})
+    }
     
     componentDidMount() {
         var follow = document.querySelector("#follow");
-        follow.addEventListener("click", function() {
-            if(follow.classList.contains("level1")) {
-                follow.classList.remove("level1");
-                follow.classList.add("level2");
-                follow.innerHTML = "Unfollow";
-            }
-            else {
-                follow.classList.remove("level2");
-                follow.classList.add("level1");
-                follow.innerHTML = "Follow";
-            }
-        });
-
-        fetch(`${settings.api_link}users/retrieveProfilePic?userId=${localStorage.getItem('id')}`)
+        if(follow) {
+            follow.addEventListener("click", function() {
+                if(follow.classList.contains("level1")) {
+                    follow.classList.remove("level1");
+                    follow.classList.add("level2");
+                    follow.innerHTML = "Unfollow";
+                }
+                else {
+                    follow.classList.remove("level2");
+                    follow.classList.add("level1");
+                    follow.innerHTML = "Follow";
+                }
+            });
+        }
+        
+        fetch(`${settings.api_link}users/retrieveProfilePic?userId=${this.state.usr === 'profile' ? localStorage.getItem('id'): this.state.usr}`)
             .then((response) => response.json())
             .catch(() => {})
             .then((data) => {
@@ -86,14 +95,16 @@ export default class ProfilePage extends Component {
                     })
                 }
             })
+        
+        this.name()
     }
 
     render() {
         return(
             <div id="profilePage">
-                <NavBar underline="11"/>
+                <NavBar underline="11" enable = {this.state.usr === 'profile' ? null : '1'}/>
 
-                <button type="button" class="btn btn-success btn-block" onClick={this.onClickHandler}>Upload profile photo</button> 
+                {this.state.usr === 'profile' ? <button type="button" class="btn btn-success btn-block" onClick={this.onClickHandler}>Upload profile photo</button> : null }
 
                 <div className = "profile-container">
                     <div className = "profile">
@@ -102,15 +113,19 @@ export default class ProfilePage extends Component {
                                 <i id = "cam" class="fa fa-camera" aria-hidden="true"></i>
                                 <img id = "pic" alt = "profile-pic" src={this.state.img}></img>
                             </label>
-                            <input id="file-input" type="file" onChange = {event => this.preview(event)}/>
+                            <input id="file-input" type="file" onChange = {event => this.preview(event)} disabled = {this.state.usr !== 'profile'}/>
                         </div>
                         <div className = "profile-contact">
-                            <div className = "left">
-                                <button id = "follow" className = "level1">Follow</button>
-                            </div>
-                            <div className = "right">
-                                <button id = "contact" className = "level1">Contact</button>
-                            </div>
+                            {this.state.usr !== 'profile' ?
+                                <div className = "left">
+                                    <button id = "follow" className = "level1">Follow</button>
+                                </div>
+                            : null }
+                            {this.state.usr !== 'profile' ?
+                                <div className = "right">
+                                    <button id = "contact" className = "level1">Contact</button>
+                                </div>
+                            : null }
                         </div>
                         <div className = "profile-info">
                             <div>
@@ -118,7 +133,7 @@ export default class ProfilePage extends Component {
                             </div>
                             <div>
                                 <h3>About me</h3>
-                                <p>Age: 18 years old</p>
+                                <p><strong>Name: </strong>{this.state.name}</p>
                             </div>
                             <div>
                                 <h3>...</h3>

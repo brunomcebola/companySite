@@ -1,0 +1,82 @@
+@import "../../utilities/functions";
+@import "../../utilities/mixins";
+@import "../../utilities/variables";
+
+#findUserPage {
+    margin-bottom: 4%
+}
+
+.displayArea {
+    @import url('https://fonts.googleapis.com/css?family=Lexend+Deca|Dosis&display=swap');
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    button {
+        & img {
+            transition: transform .25s;
+        }
+        &:hover{
+            & > img {
+                    transform:scale(1.2);
+            }
+        }
+        &:focus {
+            outline: none;
+        }
+    }
+
+    input {
+        font-family: 'Lexend Deca', sans-serif;;
+        &::placeholder{
+            font-family: 'Lexend Deca', sans-serif;
+        }
+        &:focus{
+            outline: none;
+        }
+    }
+
+    p {
+        &#placeHolder {
+            color: grey;
+            font-weight: 600;
+            font-size: medium;;
+        }
+    }
+
+    .searchbox{
+        height: 60px;
+        width: 60%;
+        min-width: 567px;
+        max-width: 100%;
+        background: white;
+        border-radius: 10px;
+        position: relative;
+        left: 0;
+        right: 0;
+        margin: 0 auto 70px;
+        top: 40px;
+        display: flex;
+
+        & > .btn-menu {
+            padding: 16px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        & > .search{
+            border: none;
+            width: 100%;
+        }
+
+        & > .btn-search {
+            padding: 16px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+    }
+
+}

@@ -14,6 +14,7 @@ import UsersAccessRequestPage from './pages/usersAccessRequestPage';
 import UsersManagementPage from './pages/usersManagementPage';
 import InventoryListPage from './pages/inventoryListPage'
 import InventoryPage from './pages/inventoryPage'
+import FindUserPage from './pages/findUserPage'
 
 const Routes = () => (
     <CookiesProvider>
@@ -22,12 +23,15 @@ const Routes = () => (
                 {/* defines which page to be rendered */}
                 <Route exact path='/' component={LoginPage} />   {/* login page */}
                 <Route exact path='/profile' component={ProfilePage} />   {/* user profile */}
+                <Route exact path='/profile/:usr' component={ProfilePage} />   {/* user profile */}
                 <Route exact path='/monthlyPlans' component={MonthlyPlanListPage} />   {/* monthly plan */}
                 <Route exact path='/monthlyPlans/:plan' component={MonthlyPlanPage} />   {/* monthly plan */}
                 <Route exact path='/usersAccessRequest' component={UsersAccessRequestPage} />   {/* monthly plan */}
                 <Route exact path='/usersManagement' component={UsersManagementPage} />   {/* monthly plan */}
                 <Route exact path='/inventory' component={InventoryListPage} />   {/* monthly plan */}
                 <Route exact path='/inventory/:invent' component={InventoryPage} />   {/* monthly plan */}
+                <Route exact path='/findUser' component={FindUserPage} />   {/* monthly plan */}
+                <Route exact path='/contact' component={DefaultPage}  />   {/* default page redirection */}
                 <Route component={DefaultPage} />   {/* default page redirection */}
             </Switch>
         </BrowserRouter>

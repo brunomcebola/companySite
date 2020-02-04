@@ -18,7 +18,8 @@ export default class NavBar extends Component {
             selectedFile: null,
             img: '',
             img_empty: true,
-            permissions: 0
+            permissions: 0,
+            name: ''
           }
     }
 
@@ -100,8 +101,7 @@ export default class NavBar extends Component {
     getName = async () => {
         let id = localStorage.getItem('id');
         let name = await api.get(`/users/name?id=${id}`);
-        var el = document.querySelector('#name');
-        el.innerHTML = name.data;
+        this.setState({name: name.data})
     }
 
     getPermissions = async () => {
@@ -191,7 +191,7 @@ export default class NavBar extends Component {
                             </li>
                             <div className="dropdown-content" id = 'dc-av'>
                                 <p>Signed in as</p>
-                                <p><strong id = "name"></strong></p>
+                                <p><strong>{this.state.name}</strong></p>
                                 <a className="hover" id="menu11" onClick={() => this.redir(this.props.underline, 10, this.props.enable)}>Profile</a>
                                 <a className="hover" id="menu12">Help</a>
                                 <a className="hover" id="menu13">Settings</a>

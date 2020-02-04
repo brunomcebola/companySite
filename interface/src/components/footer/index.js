@@ -7,7 +7,7 @@ import './styles.scss';
 //COMPONENTE USADO PARA RETROCEDER NAS PÁGINAS
 const Footer = () =>
     <div id = "footer">
-        &copy; Copyright 2019 Bruno Cebola
+        &copy; Created by Bruno Cebola
     </div> 
 
 export default Footer;

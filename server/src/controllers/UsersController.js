@@ -57,7 +57,7 @@ module.exports = {
     async paginate(req, res) {
         var aux = [];
         let docs = [];
-        const { per_page, page, order, dir, search, id } = req.query;
+        const {per_page = 1, page = 1, order, dir, search, id } = req.query;
         let users;
 
         users = await User.find({ _id: { $ne: id } });

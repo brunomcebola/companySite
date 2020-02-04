@@ -146,7 +146,6 @@ export default class UsersManagementPage extends Component {
 												.then(result => {
 													result.docs.map(res => {
 														for(let i = 0; i< aux.length; i++) {
-															console.log(aux[i].userId)
 															if(aux[i].userId === res._id) {res.avatar = aux[i].avatar;return}
 														}
 														res.avatar = avatar

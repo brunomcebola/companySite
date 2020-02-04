@@ -1,0 +1,25 @@
+.findUserEl {
+    width: 50vw;
+    height: 120px;
+    min-width: 550px;
+    background: #fff;
+    margin-bottom: 25px;
+    border-radius: 10px;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.22), 0 10px 10px rgba(0, 0, 0, 0.22);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    padding: 40px 40px 40px 25px;
+
+    img {
+        width: 75px;
+        height:75px;
+        border-radius: 50%;
+    }
+    div {
+        flex-grow: 1;
+        margin-left: 25px;
+    }
+}
+
