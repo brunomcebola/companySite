@@ -7,7 +7,7 @@ import settings from '../../config'
 import avatar from '.././../images/other.png';
 import logo from '../../images/logo.png'
 
-var link_list = ["/home", "/schedule", "/monthlyPlans", "/inventory",
+var link_list = ["/home", "/calendar", "/monthlyPlans", "/inventory",
                  "/activityPlanning", "/fileSharing", "/findUser", "/usersManagement", "/usersAccessRequest",
                  "/analytics", "/profile"];
 
@@ -160,7 +160,7 @@ export default class NavBar extends Component {
                     </ul>
                     <ul className="menu center">
                         <li><a className="hover" id="menu1" onClick={() => this.redir(this.props.underline, 0, this.props.enable)}>Home</a></li>
-                        <li><a className="hover" id="menu2" onClick={() => this.redir(this.props.underline, 1, this.props.enable)}>Schedule</a></li>
+                        <li><a className="hover" id="menu2" onClick={() => this.redir(this.props.underline, 1, this.props.enable)}>Calendar</a></li>
                         <li><a className="hover" id="menu3" onClick={() => this.redir(this.props.underline, 2, this.props.enable)}>Monthly plans</a></li>
                         <div className="dropdown">
                             <li className="dropbtn"><a className="hover" id="other">Other <i className="fa fa-angle-down" id = 'i-av'></i></a></li>

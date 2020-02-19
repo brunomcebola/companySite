@@ -15,6 +15,7 @@ import UsersManagementPage from './pages/usersManagementPage';
 import InventoryListPage from './pages/inventoryListPage'
 import InventoryPage from './pages/inventoryPage'
 import FindUserPage from './pages/findUserPage'
+import HomePage from './pages/homePage'
 
 const Routes = () => (
     <CookiesProvider>
@@ -22,6 +23,7 @@ const Routes = () => (
             <Switch>
                 {/* defines which page to be rendered */}
                 <Route exact path='/' component={LoginPage} />   {/* login page */}
+                <Route exact path='/home' component={HomePage} />   {/* user profile */}
                 <Route exact path='/profile' component={ProfilePage} />   {/* user profile */}
                 <Route exact path='/profile/:usr' component={ProfilePage} />   {/* user profile */}
                 <Route exact path='/monthlyPlans' component={MonthlyPlanListPage} />   {/* monthly plan */}

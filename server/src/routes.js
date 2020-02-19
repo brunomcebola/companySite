@@ -31,5 +31,6 @@ routes.put('/inventory/uploadImage', Inventory.uploadImage);
 routes.get('/inventory/getTableName', Inventory.getTableName);
 routes.post('/inventory/updateItem', Inventory.updateItem);
 routes.delete('/inventory/deleteItem', Inventory.deleteItem);
+routes.get('/inventory/pdf', Inventory.pdf);
 
 module.exports = routes;

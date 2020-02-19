@@ -3,7 +3,10 @@ const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
 const rimraf = require("rimraf");
-const sortJsonArray = require('sort-json-array');
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
+var pdf = require("pdf-creator-node");
+let decode = require('image-decode')
 
 var con;
 
@@ -20,8 +23,8 @@ function handleDisconnect() {
 
     con.connect(function(err) {                   // The server is either down
         if(err) {                                     // or restarting (takes a while sometimes).
-        console.log('error when connecting to db:', err);
-        setTimeout(handleDisconnect, 2000); // We introduce a delay before attempting to reconnect,
+            console.log('error when connecting to db:', err);
+            setTimeout(handleDisconnect, 2000); // We introduce a delay before attempting to reconnect,
         }                                     // to avoid a hot loop, and to allow our node script to
     });                                     // process asynchronous requests in the meantime.
                                           // If you're also serving http, display a 503 error.
@@ -39,7 +42,7 @@ handleDisconnect();
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, `./images/inventory/${req.query.tableId}`)
+        cb(null, `./images/inventory`)
     },
     filename: function (req, file, cb) {
         cb(null, req.query.lineId+'_line-pic'+file.originalname.slice(file.originalname.lastIndexOf('.'), file.originalname.length))
@@ -66,10 +69,6 @@ module.exports = {
           
         con.query(sql);
 
-        if (!fs.existsSync(`./images/inventory/${req.body.id}`)){
-            fs.mkdirSync(`./images/inventory/${req.body.id}`);
-        }
-
         return res.status(200).send('Changes saved to database')
     },
 
@@ -87,7 +86,6 @@ module.exports = {
     async delete(req, res) {
         con.query(`DELETE FROM inventories WHERE id = '${req.query.tableId}'`);
         con.query(`DROP TABLE ${req.query.tableId}`);
-        rimraf(`./images/inventory/${req.query.tableId}`, function () {});
         return res.status(200).send('Changes saved to database') 
     },
 
@@ -134,22 +132,8 @@ module.exports = {
         });
     },
 
-    async uploadImage(req,res) {
-        fs.readdir(`./images/inventory/${req.query.tableId}`, (err, files) => {
-            if (err) {
-                return
-            }
-        
-            files.forEach(async file => {
-                const fileDir = path.join(`./images/inventory/${req.query.tableId}`, file);
-        
-                if (file.slice(0,file.lastIndexOf('.')) == req.query.lineId+'_line-pic') {
-                    await fs.unlink(fileDir, () => {});
-                }
-            });
-        });
-            
-        up(req, res, function (err) {
+    async uploadImage(req,res) {           
+        up(req, res, async function (err) {
             if (err instanceof multer.MulterError) {
                 return
             } else if (err) {
@@ -158,10 +142,12 @@ module.exports = {
             
             let data = {
                 img: fs.readFileSync(req.file.path),
-                img_name: req.file.originalname
+                img_name: req.query.lineId+'_line-pic'+req.file.originalname.slice(req.file.originalname.lastIndexOf('.'), req.file.originalname.length)
             }
 
             con.query(`UPDATE ${req.query.tableId} SET ? WHERE id = ${req.query.lineId}`, data)
+
+            await fs.unlink(req.file.path, () => {});
         })   
 
         return res.status(200).send("Changes saved to datatabse")
@@ -180,19 +166,79 @@ module.exports = {
 
     async deleteItem(req, res) {
         con.query(`DELETE FROM ${req.query.tableId} WHERE id = '${req.query.lineId}'`);
-        fs.readdir(`./images/inventory/${req.query.tableId}`, (err, files) => {
-            if (err) {
-                return
-            }
-        
-            files.forEach(async file => {
-                const fileDir = path.join(`./images/inventory/${req.query.tableId}`, file);
-        
-                if (file.slice(0,file.indexOf('.')) == req.query.lineId+'_line-pic') {
-                    await fs.unlink(fileDir, () => {});
+        return res.status(200).send("changes saved to database")
+    },
+
+    async pdf(req, res) {             
+        con.query(`SELECT * FROM ${req.query.tableId} ORDER BY name ASC`, async function(err, result, fields) {
+            var groups = []
+            var aux = [];
+            let sz = 0;
+
+            fs.mkdirSync(path.dirname(__dirname) + `/templates/images/${req.query.tableId}`);
+
+            result.forEach(rs => {
+                let loc = 'tools.png'
+                if(rs.img) {
+                    let buf = Buffer.from(rs.img,'base64');
+                    let ext = rs.img_name.slice(rs.img_name.lastIndexOf('.'), rs.img_name.length)
+                    let name = rs.id+'_line'+ext
+                    fs.writeFile(path.join(path.dirname(__dirname),`/templates/images/${req.query.tableId}/`, name), buf, function(error){});
+                    loc = req.query.tableId + '/' + name
+                }
+                aux.push({
+                    name: rs.name,
+                    path: loc,
+                    qnt: rs.qnt
+                })
+                sz += 1;
+                if(sz == 12) {
+                    sz = 0;
+                    groups.push(aux);
+                    aux = []
                 }
             });
-        });
-        return res.status(200).send("changes saved to database")
+
+            if(sz != 0) {
+                groups.push(aux);
+            }
+
+            var html = fs.readFileSync('./src/templates/template.html', 'utf8');
+
+            var options = {
+                format: "A4",
+                orientation: "portrait",
+                border: "10mm",
+                base: 'file:///' + path.dirname(__dirname) + '/templates/images/',
+                "footer": {
+                    "height": "5mm",
+                    "contents": {
+                        default: '<span style = "float: right"><span style="color: #444;">{{page}}</span>/<span>{{pages}}</span></span>', // fallback value
+                    }
+                }
+            };
+
+            var document = {
+                html: html,
+                data: {
+                    groups,
+                    title: 'Arduino inventory'
+                },
+                path: "./output.pdf"
+            };
+
+            await pdf.create(document, options)
+            
+            var file = fs.createReadStream(document.path);
+            file.pipe(res);
+
+            await fs.unlink(document.path, () => {});
+
+            rimraf(path.dirname(__dirname) + `/templates/images/${req.query.tableId}`, function () {});
+
+            return
+        })
+
+        return
     }
 }

@@ -1,13 +1,18 @@
 import React, { Component } from 'react';
+import { progressBarFetch, setOriginalFetch, ProgressBar } from 'react-fetch-progressbar';
+
+import axios from 'axios';
+import api from '../../services/api'
 
 import _variables from '../../utilities/_variables.scss';
 
 import './styles.scss';
-import api from '../../services/api'
+
+setOriginalFetch(window.fetch);
+window.fetch = progressBarFetch;
 
 var lastClick = null;
 var newClick = null;
-
 
 export default class InventListEl extends Component {
     ordinal_suffix_of = (i) => {
@@ -82,19 +87,55 @@ export default class InventListEl extends Component {
         });
     }
 
+    download = async (id) => {
+        let cover = document.querySelector(`#ilc${this.props.id}`)
+        cover.style.display = 'block'
+
+        fetch(`http://localhost:3001/inventory/pdf?tableId=${id}`, {
+            method: "GET",
+            responseType: "blob"
+            //Force to receive data in a Blob Format
+        })
+            .then(response => response.blob())
+            .then(response => {
+                //Create a Blob from the PDF Stream
+                const file = new Blob([response], {
+                    type: "application/pdf"
+                });
+                //Build a URL from the file
+                const fileURL = URL.createObjectURL(file);
+                //Open the URL on new Window
+                //window.open(fileURL);
+            })
+            .catch(error => {
+                console.log(error);
+        });
+    }
+
     render() {
         return(
-            <div className = "inventListEl" id = {this.props.id}>
-                <div>
-                    <h3 id = {"h3"+this.props.num}>
-                        <div id = {"div"+this.props.num}>{this.name(this.props.name)}</div>
-                        <i className = {`fa fa-trash-o ${this.props.creator_id !== localStorage.getItem('id') ? 'disabled' : ''}`} onClick = {this.props.creator_id === localStorage.getItem('id') ? (() => this.props.modal(this.props.id)) : null}></i>
-                        <i className = {`fa fa-pencil ${this.props.creator_id !== localStorage.getItem('id') ? 'disabled' : ''}`} onClick = {this.props.creator_id === localStorage.getItem('id') ? () => this.setEditable("div"+this.props.num) : null}></i>
-                    </h3>
-                    <p><strong>Created by: </strong>{this.props.info}</p>
-                    <p><strong>At: </strong>{this.props.date}</p>
+            <div className = "inventListElAux">
+                <div className = "inventListEl" id = {this.props.id}>
+                    <div>
+                        <h3 id = {"h3"+this.props.num}>
+                            <div id = {"div"+this.props.num}>{this.name(this.props.name)}</div>
+                            <i className = {`fa fa-trash-o ${this.props.creator_id !== localStorage.getItem('id') ? 'disabled' : ''}`} onClick = {this.props.creator_id === localStorage.getItem('id') ? (() => this.props.modal(this.props.id)) : null}></i>
+                            <i className = {`fa fa-pencil ${this.props.creator_id !== localStorage.getItem('id') ? 'disabled' : ''}`} onClick = {this.props.creator_id === localStorage.getItem('id') ? () => this.setEditable("div"+this.props.num) : null}></i>
+                            <i className = "fa fa-download" onClick = {() => this.download(this.props.id)}></i>
+                        </h3>
+                        <p><strong>Created by: </strong>{this.props.info}</p>
+                        <p><strong>At: </strong>{this.props.date}</p>
+                    </div>
+                    <button className = "level1" onClick = {() => this.redirect(this.props.num, this.props.id)}>View</button>
                 </div>
-                <button className = "level1" onClick = {() => this.redirect(this.props.num, this.props.id)}>View</button>
+                <div className = "inventListElCover" id = {"ilc"+this.props.id}>
+                    <ProgressBar style={{
+                        backgroundColor: 'green', 
+                        height: '20px',
+                        left: '0',
+                        top: '50px'
+                    }}/>
+                </div>
             </div>
         )
     }

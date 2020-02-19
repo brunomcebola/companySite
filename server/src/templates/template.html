@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <mate charest="utf-8" />
+        <style>
+            .header {
+                height: 100px;
+                margin-bottom: 20px;
+                text-align: center
+            }
+            .header h1 {
+                line-height: 50px;
+                padding-top: 25px;;
+            }
+            .header img {
+                height: 100px;
+                width: 100px;
+                position: absolute;
+                left: 0;
+            }
+            table {
+                width: 100%;
+                margin: auto ;
+                border-collapse: collapse;
+            }
+            table tr:nth-child(even){background-color: #f2f2f2;}
+            table th {
+                font-size: 25px
+            }
+            table th, table td {
+                text-align: center;
+                border: 1px solid #ddd;
+                padding: 5px;
+            }
+            table th:first-of-type, table td:first-of-type {
+                width: 10%
+            }
+            table th:nth-child(2), table td:nth-child(2) {
+                width: 40%
+            }
+            table th:nth-child(3), table td:nth-child(3),
+            table th:nth-child(4), table td:nth-child(4) {
+                width: 21%
+            }
+            table th:nth-child(5), table td:nth-child(5) {
+                width: 8%
+            }
+            table td img {
+                height: 75px;
+                width: 75px;
+                border-radius: 50%;
+                border: none
+            }
+            
+        </style>
+        <title>Hello world!</title>
+    </head>
+    <body>
+        {{#each groups}}
+        <div class = "header">
+            <img src="logo.png">
+            <h1>{{../title}}</h1>
+        </div>
+        <table>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Location</th>
+                <th>Qnt</th> 
+            </tr>
+            {{#.}} 
+                <tr>
+                    <td><img src = "{{this.path}}"></td>
+                    <td>{{this.name}}</td>
+                    <td>{{this.cat}}</td>
+                    <td>{{this.loc}}</td>
+                    <td>{{this.qnt}}</td>
+                </tr>  
+            {{/.}}
+        </table>
+        {{/each}}
+    </body>
+</html>

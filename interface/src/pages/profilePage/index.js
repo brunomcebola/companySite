@@ -102,7 +102,7 @@ export default class ProfilePage extends Component {
     render() {
         return(
             <div id="profilePage">
-                <NavBar underline="11" enable = {this.state.usr === 'profile' ? null : '1'}/>
+                <NavBar underline = {this.state.usr === 'profile' ? '11' : '7'} enable = {this.state.usr === 'profile' ? null : '1'}/>
 
                 {this.state.usr === 'profile' ? <button type="button" class="btn btn-success btn-block" onClick={this.onClickHandler}>Upload profile photo</button> : null }
 

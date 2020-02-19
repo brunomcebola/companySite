@@ -1,3 +1,11 @@
+@import "../../utilities/functions";
+@import "../../utilities/mixins";
+@import "../../utilities/variables";
+
+.inventListElAux {
+    position: relative;
+}
+
 .inventListEl {
     width: 50vw;
     height: 120px;
@@ -31,6 +39,7 @@
                 color: #f00;
 
                 &:active {
+                    opacity: 1;
                     color: rgb(190, 0, 0)
                 }
             }
@@ -39,12 +48,23 @@
                 color: rgb(6, 173, 0);
 
                 &:active {
+                    opacity: 1;
                     color: rgb(4, 107, 0);
                 }
             }
 
+            &.fa-download {
+                transform: translateY(-0.5px);
+                color: $firstColor;
+
+                &:active {
+                    opacity: 1;
+                    color: $firstDarkColor;
+                }
+            }
+
             &.disabled {
-                color: grey;
+                color: rgb(158, 158, 158);
                 cursor: default;
 
                 &:hover {
@@ -52,7 +72,7 @@
                 }
 
                 &:active {
-                    color: grey;
+                    color: rgb(158, 158, 158);
                 }
             }
 
@@ -61,4 +81,21 @@
             }
         }
     }   
+}
+
+.inventListElCover {
+    position: absolute;
+    top: 0; 
+    width: 50vw;
+    height: 120px;
+    min-width: 550px;
+    background: rgba(238, 238, 238, 0.5);
+    margin-bottom: 25px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    padding: 40px;
+    display: none;
 }

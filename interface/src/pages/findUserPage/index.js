@@ -64,10 +64,6 @@ export default class FindUserPage extends Component {
         }
     }
 
-    search = async () => {
-
-    }
-
     render() {
         return(
             <div className = "findUserPage">

@@ -36,7 +36,7 @@ export default class LoginPage extends Component {
 
         if(resp.status === 200) {
             localStorage.setItem('id', resp.data);
-            window.location.href = '/monthlyPlans'
+            window.location.href = '/home'
         }
     }
 
@@ -67,9 +67,7 @@ export default class LoginPage extends Component {
 
         var data = {name, surname, email}
   
-        let response = await api.post('/accessRequest/new', data);
-
-        console.log(response.status)
+        await api.post('/accessRequest/new', data);
 
         //changes the display of the sign-up panel from form to checkmark
         form.style.display = "none";
